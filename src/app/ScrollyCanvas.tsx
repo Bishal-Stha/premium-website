@@ -49,29 +49,55 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
     }
 
     let count = 0;
+    const initialBatch = 30;
     const images: HTMLImageElement[] = [];
     document.body.style.overflow = "hidden";
 
-    for (let i = 1; i <= totalFrames; i++) {
+    // Failsafe: if 10 seconds pass, forcibly dismiss the preloader
+    const failsafeTimeout = setTimeout(() => {
+      setIsFullyLoaded(true);
+      document.body.style.overflow = "auto";
+    }, 10000);
+
+    const handleFrameProcessed = () => {
+      count++;
+      setLoadedFrames(count);
+
+      // Unlock UI as soon as the initial batch is ready (or if we already reached totalFrames somehow)
+      if (count === initialBatch || count === totalFrames) {
+        setIsFullyLoaded(true);
+        document.body.style.overflow = "auto";
+        clearTimeout(failsafeTimeout);
+      }
+    };
+
+    // Preload the first batch to unblock UI quickly...
+    for (let i = 1; i <= initialBatch; i++) {
       const img = new Image();
       const frameStr = i.toString().padStart(4, "0");
       img.src = `/assets/sequence/frame_${frameStr}.webp`;
-      img.onload = () => {
-        count++;
-        setLoadedFrames(count);
-        if (count === totalFrames) {
-          setTimeout(() => {
-            setIsFullyLoaded(true);
-            document.body.style.overflow = "auto";
-          }, 800);
-        }
-      };
-      images.push(img);
+      img.onload = handleFrameProcessed;
+      img.onerror = handleFrameProcessed;
+      images[i - 1] = (img);
     }
+
+    // ...Then fetch the remaining frames asynchronously
+    setTimeout(() => {
+      for (let i = initialBatch + 1; i <= totalFrames; i++) {
+        const img = new Image();
+        const frameStr = i.toString().padStart(4, "0");
+        img.src = `/assets/sequence/frame_${frameStr}.webp`;
+        img.onload = handleFrameProcessed;
+        img.onerror = handleFrameProcessed;
+        images[i - 1] = (img);
+      }
+    }, 500);
+
     imagesRef.current = images;
 
     return () => {
       document.body.style.overflow = "auto";
+      clearTimeout(failsafeTimeout);
     };
   }, [isMobile]);
 
@@ -152,7 +178,7 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
     };
   }, [isFullyLoaded, isMobile]);
 
-  const loadingPercentage = Math.round((loadedFrames / totalFrames) * 100);
+  const loadingPercentage = Math.round((Math.min(loadedFrames, 30) / 30) * 100);
 
   return (
     <>

@@ -63,6 +63,28 @@ const destinationData = {
   }
 };
 
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
+  const data = destinationData[slug as keyof typeof destinationData];
+  
+  if (!data) {
+    return {
+      title: 'Destination Not Found',
+    };
+  }
+
+  return {
+    title: `${data.title} | Discover Nepal`,
+    description: data.description,
+    openGraph: {
+      title: `${data.title} | Discover Nepal`,
+      description: data.description,
+    },
+  };
+}
+
 export default async function DestinationPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;

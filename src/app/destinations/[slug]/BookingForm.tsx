@@ -6,12 +6,25 @@ import { submitBooking } from '../../actions';
 export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [errorMsg, setErrorMsg] = useState("");
+  const [formData, setFormData] = useState({
+    destination_slug: destinationSlug,
+    fullName: "",
+    email: "",
+    bookingDate: ""
+  });
 
-  async function clientSubmit(formData: FormData) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  async function clientSubmit(data: FormData) {
     setStatus('loading');
     setErrorMsg("");
 
-    const result = await submitBooking(formData);
+    const result = await submitBooking(data);
 
     if (result.error) {
       setErrorMsg(result.error);
@@ -40,10 +53,12 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
   return (
     <form action={clientSubmit} className="space-y-6 relative z-10">
       <div>
-        <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Destination</label>
+        <label htmlFor="formDestination" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Destination</label>
         <select
+          id="formDestination"
           name="destination_slug"
-          defaultValue={destinationSlug}
+          value={formData.destination_slug}
+          onChange={handleChange}
           required
           className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white outline-none focus:border-white/50 transition-colors appearance-none"
         >
@@ -56,10 +71,13 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
       </div>
 
       <div>
-        <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Full Name</label>
+        <label htmlFor="formName" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Full Name</label>
         <input 
+          id="formName"
           type="text" 
           name="fullName"
+          value={formData.fullName}
+          onChange={handleChange}
           required
           className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors"
           placeholder="E.g., Jane Mountaineer"
@@ -67,10 +85,13 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
       </div>
 
       <div>
-        <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Email Address</label>
+        <label htmlFor="formEmail" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Email Address</label>
         <input 
+          id="formEmail"
           type="email" 
           name="email"
+          value={formData.email}
+          onChange={handleChange}
           required
           className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors"
           placeholder="jane@example.com"
@@ -78,10 +99,13 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
       </div>
 
       <div>
-        <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Desired Start Date</label>
+        <label htmlFor="formDate" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Desired Start Date</label>
         <input 
+          id="formDate"
           type="date" 
           name="bookingDate"
+          value={formData.bookingDate}
+          onChange={handleChange}
           required
           className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors [color-scheme:dark]"
         />

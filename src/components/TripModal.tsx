@@ -5,13 +5,26 @@ import { submitBooking } from '../app/actions';
 export function TripModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [errorMsg, setErrorMsg] = useState("");
+  const [formData, setFormData] = useState({
+    destination_slug: "",
+    fullName: "",
+    email: "",
+    bookingDate: ""
+  });
 
   if (!isOpen) return null;
 
-  async function clientSubmit(formData: FormData) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  async function clientSubmit(data: FormData) {
     setStatus('loading');
     setErrorMsg("");
-    const result = await submitBooking(formData);
+    const result = await submitBooking(data);
     if (result.error) {
       setErrorMsg(result.error);
       setStatus('idle');
@@ -43,10 +56,12 @@ export function TripModal({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
             <h3 className="text-2xl font-semibold text-white mb-6">Plan Your Trip</h3>
 
             <div>
-              <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Destination</label>
+              <label htmlFor="destination_slug" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Destination</label>
               <select
+                id="destination_slug"
                 name="destination_slug"
-                defaultValue=""
+                value={formData.destination_slug || ""}
+                onChange={handleChange}
                 required
                 className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white outline-none focus:border-white/50 transition-colors appearance-none"
               >
@@ -59,18 +74,44 @@ export function TripModal({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
             </div>
 
             <div>
-              <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Full Name</label>
-              <input type="text" name="fullName" required className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors" placeholder="E.g., Jane Mountaineer" />
+              <label htmlFor="fullName" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Full Name</label>
+              <input 
+                id="fullName"
+                type="text" 
+                name="fullName" 
+                value={formData.fullName}
+                onChange={handleChange}
+                required 
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors" 
+                placeholder="E.g., Jane Mountaineer" 
+              />
             </div>
 
             <div>
-              <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Email Address</label>
-              <input type="email" name="email" required className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors" placeholder="jane@example.com" />
+              <label htmlFor="email" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Email Address</label>
+              <input 
+                id="email"
+                type="email" 
+                name="email" 
+                value={formData.email}
+                onChange={handleChange}
+                required 
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors" 
+                placeholder="jane@example.com" 
+              />
             </div>
 
             <div>
-              <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Target Date</label>
-              <input type="date" name="bookingDate" required className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white outline-none focus:border-white/50 transition-colors [color-scheme:dark]" />
+              <label htmlFor="bookingDate" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Target Date</label>
+              <input 
+                id="bookingDate"
+                type="date" 
+                name="bookingDate" 
+                value={formData.bookingDate}
+                onChange={handleChange}
+                required 
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white outline-none focus:border-white/50 transition-colors [color-scheme:dark]" 
+              />
             </div>
 
             {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}

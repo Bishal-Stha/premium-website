@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Footer } from '@/components/Footer';
 
 export const metadata = {
   title: 'Destinations | Discover Nepal',
@@ -11,7 +10,7 @@ export const instant = false; // Disable partial prerendering if needed
 const packages = [
   { id: 1, slug: 'himalayas', title: 'The Himalayas', days: '14 Days', img: '/assets/thumb_everest.jpg', description: 'Journey to the roof of the world. Stand in the shadow of Mount Everest and explore ancient Sherpa villages.' },
   { id: 2, slug: 'hills', title: 'The Hilly Region', days: '12 Days', img: '/assets/thumb_annapurna.jpg', description: 'Trek the legendary Annapurna circuit. Vibrant valleys, rhododendron forests, and deeply rooted local cultures.' },
-  { id: 3, slug: 'rivers', title: 'The Raging Rivers', days: '5 Days', img: '/assets/thumb_river.jpg', description: 'Adrenaline-pumping whitewater rafting and kayaking adventures winding down from the glacial peaks.' },
+  { id: 3, slug: 'rivers', title: 'The Raging Rivers', days: '6 Days', img: '/assets/thumb_river.jpg', description: 'Adrenaline-pumping whitewater rafting and kayaking adventures winding down from the glacial peaks.' },
   { id: 4, slug: 'terai', title: 'The Terai Plains', days: '4 Days', img: '/assets/thumb_chitwan.jpg', description: 'Exclusive jungle safaris. Track Bengal tigers, one-horned rhinos, and wild elephants in their natural habitats.' }
 ];
 
@@ -60,8 +59,6 @@ export default function DestinationsPage() {
           ))}
         </div>
       </section>
-
-      <Footer />
     </main>
   );
 }
