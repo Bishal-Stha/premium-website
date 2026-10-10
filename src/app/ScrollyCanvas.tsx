@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useLayoutEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Link from 'next/link';
+
+import { TripModal } from '../components/TripModal';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -23,18 +25,30 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loadedFrames, setLoadedFrames] = useState(0);
   const [isFullyLoaded, setIsFullyLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const totalFrames = 240;
 
-  // Track images & current scrub frame
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef(1);
 
-  // Preloader logic
+  useLayoutEffect(() => {
+    // Basic mobile detection
+    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
+    if (isMobile) {
+      // If mobile, we bypass canvas loading strictly.
+      setLoadedFrames(totalFrames);
+      setIsFullyLoaded(true);
+      return;
+    }
+
     let count = 0;
     const images: HTMLImageElement[] = [];
-    
-    // Lock scroll on body while loading
     document.body.style.overflow = "hidden";
 
     for (let i = 1; i <= totalFrames; i++) {
@@ -45,7 +59,6 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
         count++;
         setLoadedFrames(count);
         if (count === totalFrames) {
-          // Add a slight delay for cinematic effect
           setTimeout(() => {
             setIsFullyLoaded(true);
             document.body.style.overflow = "auto";
@@ -59,57 +72,59 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, []);
+  }, [isMobile]);
 
   useGSAP(() => {
-    if (!isFullyLoaded || !canvasRef.current || !containerRef.current) return;
+    if (!isFullyLoaded || !containerRef.current) return;
+    
+    // Canvas logic is only executed if canvasRef is present (desktop)
+    let render = () => {};
+    if (!isMobile && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        render = () => {
+          if (!canvas || !ctx || !imagesRef.current) return;
+          const f = Math.max(1, Math.min(totalFrames, Math.round(currentFrameRef.current))) - 1;
+          const img = imagesRef.current[f];
+          
+          if (img && img.complete) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const hRatio = canvas.width / img.width;
+            const vRatio = canvas.height / img.height;
+            const ratio = Math.max(hRatio, vRatio);
+            
+            const centerShiftX = (canvas.width - img.width * ratio) / 2;
+            const centerShiftY = (canvas.height - img.height * ratio) / 2;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const render = () => {
-      if (!canvas || !ctx || !imagesRef.current) return;
-      const f = Math.max(1, Math.min(totalFrames, Math.round(currentFrameRef.current))) - 1;
-      const img = imagesRef.current[f];
-      
-      if (img && img.complete) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const hRatio = canvas.width / img.width;
-        const vRatio = canvas.height / img.height;
-        const ratio = Math.max(hRatio, vRatio);
-        
-        const centerShiftX = (canvas.width - img.width * ratio) / 2;
-        const centerShiftY = (canvas.height - img.height * ratio) / 2;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(
-          img,
-          0,
-          0,
-          img.width,
-          img.height,
-          centerShiftX,
-          centerShiftY,
-          img.width * ratio,
-          img.height * ratio
-        );
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(
+              img,
+              0,
+              0,
+              img.width,
+              img.height,
+              centerShiftX,
+              centerShiftY,
+              img.width * ratio,
+              img.height * ratio
+            );
+          }
+        };
+        render();
+        window.addEventListener("resize", render);
       }
-    };
-
-    // Initial render
-    render();
-    window.addEventListener("resize", render);
+    }
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: `+=${totalFrames * 25}`, // Make scroll path quite long
+        end: `+=${totalFrames * 25}`, 
         scrub: 0.5,
         pin: true,
       },
@@ -120,14 +135,14 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
       snap: "current",
       ease: "none",
       onUpdate: () => {
-        requestAnimationFrame(render);
+        if (!isMobile) requestAnimationFrame(render);
       },
     });
 
     return () => {
-      window.removeEventListener("resize", render);
+      if (!isMobile) window.removeEventListener("resize", render);
     };
-  }, [isFullyLoaded]);
+  }, [isFullyLoaded, isMobile]);
 
   const loadingPercentage = Math.round((loadedFrames / totalFrames) * 100);
 
@@ -135,34 +150,60 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
     <>
       <Navbar />
 
-      {/* Cinematic Preloader */}
-      <div 
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-zinc-950 transition-all duration-1000 ${
-          isFullyLoaded ? 'opacity-0 pointer-events-none translate-y-[-10px]' : 'opacity-100 pointer-events-auto'
-        }`}
-      >
-        <div className="w-64 mb-8">
-          <div className="h-0.5 w-full bg-zinc-800 overflow-hidden">
-            <div 
-              className="h-full bg-white transition-all duration-100" 
-              style={{ width: `${loadingPercentage}%` }} 
-            />
-          </div>
-        </div>
-        <p className="text-white text-sm tracking-[0.3em] uppercase font-light">
-          Preparing the Journey — {loadingPercentage}%
-        </p>
+      {/* Screen Reader Semantic Text (Visually Hidden) */}
+      <div className="sr-only">
+        <h1>Discover Nepal - Premium Tourism Experience</h1>
+        <p>A cinematic journey through the geographical regions of Nepal.</p>
+        <ul>
+          {chapters.map((ch) => (
+            <li key={ch.id}>
+              <h2>{ch.title}</h2>
+              <p>{ch.description}</p>
+              <a href={ch.cta_link || "/destinations/himalayas"}>{ch.cta_text}</a>
+            </li>
+          ))}
+        </ul>
       </div>
 
+      {!isMobile && (
+        <div 
+          className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-zinc-950 transition-all duration-1000 ${
+            isFullyLoaded ? 'opacity-0 pointer-events-none translate-y-[-10px]' : 'opacity-100 pointer-events-auto'
+          }`}
+        >
+          <div className="w-64 mb-8">
+            <div className="h-0.5 w-full bg-zinc-800 overflow-hidden">
+              <div 
+                className="h-full bg-white transition-all duration-100" 
+                style={{ width: `${loadingPercentage}%` }} 
+              />
+            </div>
+          </div>
+          <p className="text-white text-sm tracking-[0.3em] uppercase font-light">
+            Preparing the Journey — {loadingPercentage}%
+          </p>
+        </div>
+      )}
+
       <div ref={containerRef} className="relative w-full bg-black">
-        {/* The sticky canvas container */}
         <div className="relative w-full h-screen overflow-hidden">
-          {/* Object-fit style via JS canvas rendering simulates cover perfectly */}
-          <canvas ref={canvasRef} className="w-full h-full" />
+          
+          {isMobile ? (
+            <video 
+              src="/assets/video_fallback.mp4" 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="w-full h-full object-cover" 
+            />
+          ) : (
+            <canvas ref={canvasRef} className="w-full h-full object-cover" />
+          )}
           
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 pointer-events-none" />
 
-          {/* Chapters Container with pointer-events-none so we don't block scroll but pointer-events-auto on children */}
+          {/* Interactive Text Layer */}
           <div className="absolute inset-0 z-10 flex flex-col justify-center px-6 md:px-[10%] xl:px-[15%] pointer-events-none">
             {chapters.map((chapter) => (
               <ChapterText 
@@ -176,15 +217,14 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
         </div>
       </div>
 
-      {/* Post-Canvas Section: Featured Packages */}
       <FeaturedPackages />
     </>
   );
 }
 
-// Navbar Component
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -204,9 +244,10 @@ function Navbar() {
       <div className="hidden md:flex gap-8 items-center text-sm tracking-widest uppercase text-white/80">
         <Link href="/destinations/himalayas" className="hover:text-white transition-colors">Destinations</Link>
         <Link href="/destinations/hills" className="hover:text-white transition-colors">Experiences</Link>
-        <Link href="/destinations/rivers" className="hover:text-white transition-colors">Plan Your Trip</Link>
-        <Link href="/destinations/terai" className="px-6 py-2 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors font-medium text-white">Book Now</Link>
+        <button onClick={() => setModalOpen(true)} className="hover:text-white transition-colors uppercase tracking-widest text-sm">Plan Your Trip</button>
+        <button onClick={() => setModalOpen(true)} className="px-6 py-2 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors font-medium text-white uppercase tracking-widest text-sm">Book Now</button>
       </div>
+      <TripModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </nav>
   );
 }
@@ -251,8 +292,8 @@ function ChapterText({
       if (el) {
         el.style.opacity = opacity.toString();
         el.style.transform = `translateY(${yOffset}px)`;
-        // Set visibility natively combined with pointerEvents so users can click only when visible!
         el.style.visibility = opacity > 0.05 ? "visible" : "hidden";
+        // Enforce clicks strictly when visible
         el.style.pointerEvents = opacity > 0.8 ? "auto" : "none";
       }
     };
@@ -266,7 +307,7 @@ function ChapterText({
       ref={textRef} 
       className="absolute top-1/2 -translate-y-1/2 max-w-xl opacity-0 invisible"
     >
-      <div className="bg-black/30 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl">
+      <div className="bg-black/40 backdrop-blur-3xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
         <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-white drop-shadow-md">
           {chapter.title}
         </h2>
@@ -290,12 +331,11 @@ function ChapterText({
   );
 }
 
-// Dummy extra section for scrolling
 function FeaturedPackages() {
   const packages = [
-    { id: 1, title: 'Everest Base Camp', days: '14 Days', img: '/assets/sequence/frame_0010.webp', link: '/destinations/himalayas' },
-    { id: 2, title: 'Annapurna Circuit', days: '12 Days', img: '/assets/sequence/frame_0080.webp', link: '/destinations/hills' },
-    { id: 3, title: 'Chitwan Wildlife Tour', days: '4 Days', img: '/assets/sequence/frame_0200.webp', link: '/destinations/terai' }
+    { id: 1, title: 'Everest Base Camp', days: '14 Days', img: '/assets/thumb_everest.jpg', link: '/destinations/himalayas' },
+    { id: 2, title: 'Annapurna Circuit', days: '12 Days', img: '/assets/thumb_annapurna.jpg', link: '/destinations/hills' },
+    { id: 3, title: 'Chitwan Wildlife Tour', days: '4 Days', img: '/assets/thumb_chitwan.jpg', link: '/destinations/terai' }
   ];
 
   return (
@@ -306,21 +346,25 @@ function FeaturedPackages() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {packages.map(pkg => (
-            <div key={pkg.id} className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden hover:border-zinc-700 transition-colors group cursor-pointer">
-              <div className="h-64 bg-zinc-800 flex items-center justify-center text-7xl group-hover:scale-105 transition-transform duration-700">
-                <img src={pkg.img} alt={pkg.title} className="w-full h-full object-cover" />
+            <Link href={pkg.link} key={pkg.id} className="block group">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden hover:border-zinc-700 transition-colors cursor-pointer h-full flex flex-col">
+                <div className="h-64 bg-zinc-800 relative overflow-hidden">
+                  <img src={pkg.img} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
+                </div>
+                <div className="p-8 flex flex-col flex-1">
+                  <span className="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-2 block">{pkg.days}</span>
+                  <h3 className="text-2xl font-medium text-white mb-6">{pkg.title}</h3>
+                  <div className="mt-auto inline-block text-sm font-medium border-b border-white/30 pb-1 text-white group-hover:border-white transition-colors">
+                    View Itinerary
+                  </div>
+                </div>
               </div>
-              <div className="p-8">
-                <span className="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-2 block">{pkg.days}</span>
-                <h3 className="text-2xl font-medium text-white mb-6">{pkg.title}</h3>
-                <Link href={pkg.link} className="text-sm font-medium border-b border-white pb-1 text-white hover:text-zinc-300 transition-colors inline-block mt-auto">
-                  View Itinerary
-                </Link>
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
     </section>
   );
 }
+
