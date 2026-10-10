@@ -1,48 +1,36 @@
-# Premium Website
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Welcome to the Premium Website project! This repository contains the source code, architecture, and documentation for our upcoming application.
+## Getting Started
 
-## 👥 Meet the Team
+First, run the development server:
 
-Our development process is handled by a specialized 3-agent team, orchestrated by the Team Lead:
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-### 1. Frontend UX Agent
-- **Focus:** React and Tailwind CSS UI.
-- **Responsibilities:** Delivering high-quality, polished user interfaces based on web design guidelines and structural evaluations (`taste.md`). Converts visual references to code when available.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-### 2. Security & Backend Agent
-- **Focus:** API architecture, database schema, and security.
-- **Responsibilities:** Managing database migrations and backend logic using the Supabase CLI. Ensures bulletproof security, strict validation, and secure authentication across all data layers.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-### 3. QA & DevOps Agent
-- **Focus:** Testing and deployment.
-- **Responsibilities:** Reviewing code (`coderabbit-code-review`), establishing stable E2E testing loops (`playwright-cli.md`), autofixing linting/build errors, and maintaining seamless deployments via the Vercel CLI.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## 🏗️ Architecture
+## Learn More
 
-- **Frontend:** React + Tailwind CSS
-- **Backend & Database:** Supabase (PostgreSQL, Authentication, Row Level Security)
-- **Deployment:** Vercel
+To learn more about Next.js, take a look at the following resources:
 
-## 🚀 Setup Instructions
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository_url>
-   cd premium-website
-   ```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-2. **Database Setup:**
-   - Make sure you have Docker installed and running.
-   - Start the local Supabase environment:
-     ```bash
-     supabase start
-     ```
+## Deploy on Vercel
 
-3. **Install Dependencies (Frontend/Backend):**
-   *(To be determined upon initialization of the framework)*
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-4. **Testing:**
-   - E2E tests are configured via Playwright.
-
-(Documentation is regularly updated by the DevOps agent as project architecture evolves.)
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
