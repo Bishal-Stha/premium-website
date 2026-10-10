@@ -293,9 +293,9 @@ function ChapterText({
 // Dummy extra section for scrolling
 function FeaturedPackages() {
   const packages = [
-    { id: 1, title: 'Everest Base Camp', days: '14 Days', img: '⛰️' },
-    { id: 2, title: 'Annapurna Circuit', days: '12 Days', img: '🏕️' },
-    { id: 3, title: 'Chitwan Wildlife Tour', days: '4 Days', img: '🦏' }
+    { id: 1, title: 'Everest Base Camp', days: '14 Days', img: '/assets/sequence/frame_0010.webp' },
+    { id: 2, title: 'Annapurna Circuit', days: '12 Days', img: '/assets/sequence/frame_0080.webp' },
+    { id: 3, title: 'Chitwan Wildlife Tour', days: '4 Days', img: '/assets/sequence/frame_0200.webp' }
   ];
 
   return (
@@ -308,7 +308,7 @@ function FeaturedPackages() {
           {packages.map(pkg => (
             <div key={pkg.id} className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden hover:border-zinc-700 transition-colors group cursor-pointer">
               <div className="h-64 bg-zinc-800 flex items-center justify-center text-7xl group-hover:scale-105 transition-transform duration-700">
-                {pkg.img}
+                <img src={pkg.img} alt={pkg.title} className="w-full h-full object-cover" />
               </div>
               <div className="p-8">
                 <span className="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-2 block">{pkg.days}</span>
