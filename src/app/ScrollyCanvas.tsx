@@ -202,10 +202,10 @@ function Navbar() {
         Discover Nepal
       </Link>
       <div className="hidden md:flex gap-8 items-center text-sm tracking-widest uppercase text-white/80">
-        <Link href="#" className="hover:text-white transition-colors">Destinations</Link>
-        <Link href="#" className="hover:text-white transition-colors">Experiences</Link>
-        <Link href="#" className="hover:text-white transition-colors">Plan Your Trip</Link>
-        <Link href="#" className="px-6 py-2 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors font-medium text-white">Book Now</Link>
+        <Link href="/destinations/himalayas" className="hover:text-white transition-colors">Destinations</Link>
+        <Link href="/destinations/hills" className="hover:text-white transition-colors">Experiences</Link>
+        <Link href="/destinations/rivers" className="hover:text-white transition-colors">Plan Your Trip</Link>
+        <Link href="/destinations/terai" className="px-6 py-2 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors font-medium text-white">Book Now</Link>
       </div>
     </nav>
   );
@@ -276,7 +276,7 @@ function ChapterText({
         
         {chapter.cta_text && (
           <Link 
-            href={chapter.cta_link || "#"} 
+            href={chapter.cta_link || "/destinations/himalayas"} 
             className="inline-flex items-center gap-3 px-8 py-4 bg-white text-black text-sm uppercase tracking-widest font-semibold rounded-full hover:bg-neutral-200 transition-transform hover:scale-105"
           >
             {chapter.cta_text}
@@ -293,9 +293,9 @@ function ChapterText({
 // Dummy extra section for scrolling
 function FeaturedPackages() {
   const packages = [
-    { id: 1, title: 'Everest Base Camp', days: '14 Days', img: '/assets/sequence/frame_0010.webp' },
-    { id: 2, title: 'Annapurna Circuit', days: '12 Days', img: '/assets/sequence/frame_0080.webp' },
-    { id: 3, title: 'Chitwan Wildlife Tour', days: '4 Days', img: '/assets/sequence/frame_0200.webp' }
+    { id: 1, title: 'Everest Base Camp', days: '14 Days', img: '/assets/sequence/frame_0010.webp', link: '/destinations/himalayas' },
+    { id: 2, title: 'Annapurna Circuit', days: '12 Days', img: '/assets/sequence/frame_0080.webp', link: '/destinations/hills' },
+    { id: 3, title: 'Chitwan Wildlife Tour', days: '4 Days', img: '/assets/sequence/frame_0200.webp', link: '/destinations/terai' }
   ];
 
   return (
@@ -313,9 +313,9 @@ function FeaturedPackages() {
               <div className="p-8">
                 <span className="text-xs uppercase tracking-widest text-zinc-400 font-semibold mb-2 block">{pkg.days}</span>
                 <h3 className="text-2xl font-medium text-white mb-6">{pkg.title}</h3>
-                <button className="text-sm font-medium border-b border-white pb-1 text-white hover:text-zinc-300 transition-colors">
+                <Link href={pkg.link} className="text-sm font-medium border-b border-white pb-1 text-white hover:text-zinc-300 transition-colors inline-block mt-auto">
                   View Itinerary
-                </button>
+                </Link>
               </div>
             </div>
           ))}
