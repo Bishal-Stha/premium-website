@@ -214,8 +214,7 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
           {/* First-Load Hero Overlay */}
           <div ref={heroRef} className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none transition-opacity duration-300">
              <span className="text-white/80 uppercase tracking-[0.5em] text-sm md:text-base font-semibold mb-4 drop-shadow-md">Welcome to the Top of the World</span>
-             <h1 className="sr-only">Discover Nepal</h1>
-             <img src="/logo.png" alt="Discover Nepal" className="w-64 h-64 md:w-96 md:h-96 object-contain mb-6 drop-shadow-2xl" />
+             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-white drop-shadow-2xl mb-6">DISCOVER NEPAL</h1>
              <p className="max-w-xl text-lg md:text-xl font-light text-neutral-200 drop-shadow-xl">Embark on a cinematic journey through ancient mountains, cultural heartlands, and wild plains.</p>
              <div className="mt-12 flex flex-col items-center gap-2 animate-bounce opacity-80">
                 <span className="text-xs uppercase tracking-widest text-white">Scroll to Explore</span>
@@ -260,8 +259,9 @@ function Navbar() {
       <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-500 border-b border-transparent ${
         scrolled || menuOpen ? 'bg-black/90 backdrop-blur-md border-white/10 shadow-xl' : 'bg-transparent'
       }`}>
-        <Link href="/" className="text-white text-xl md:text-2xl font-bold tracking-tighter uppercase relative z-50">
-          Discover Nepal
+        <Link href="/" className="flex items-center relative z-50 hover:scale-105 transition-transform">
+          <img src="/logo.png" alt="Discover Nepal" className="w-16 h-16 md:w-20 md:h-20 object-contain hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all" />
+          <span className="sr-only">Discover Nepal</span>
         </Link>
         
         {/* Desktop Nav */}
