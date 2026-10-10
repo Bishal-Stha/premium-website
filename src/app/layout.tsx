@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Footer } from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Premium Website | Discover Nepal",
+  metadataBase: new URL("https://premium-website-pearl.vercel.app"),
+  title: "Discover Nepal - Premium Himalayan Treks & Safaris",
   description: "Experience the breathtaking landscapes and unparalleled adventures of Nepal through an interactive cinematic journey.",
   openGraph: {
     title: "Discover Nepal - Premium Tourism Experience",
@@ -43,7 +45,12 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
       </head>
-      <body className="min-h-full flex flex-col bg-black text-white">{children}</body>
+      <body className="min-h-full flex flex-col bg-black text-white">
+        <div className="flex-1">
+          {children}
+        </div>
+        <Footer />
+      </body>
     </html>
   );
 }
