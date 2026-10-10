@@ -3,27 +3,26 @@
 import { supabase } from '@/lib/supabase'
 
 export async function submitBooking(formData: FormData) {
-  const destination = formData.get("destination") as string;
-  const fullName = formData.get("fullName") as string;
+  const destination_slug = formData.get("destination_slug") as string;
+  const name = formData.get("fullName") as string;
   const email = formData.get("email") as string;
-  const bookingDate = formData.get("bookingDate") as string;
+  const date = formData.get("bookingDate") as string;
 
-  if (!destination || !fullName || !email || !bookingDate) {
+  if (!destination_slug || !name || !email || !date) {
     return { error: "All fields are required." };
   }
 
-  // Basic email validation
   if (!email.includes("@")) {
     return { error: "Please enter a valid email address." };
   }
 
   const { error } = await supabase
-    .from('bookings')
+    .from('booking_inquiries')
     .insert([{ 
-      destination, 
-      full_name: fullName, 
+      destination_slug, 
+      name, 
       email, 
-      booking_date: bookingDate 
+      date 
     }]);
 
   if (error) {

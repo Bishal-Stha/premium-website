@@ -266,9 +266,8 @@ function Navbar() {
         
         {/* Desktop Nav */}
         <div className="hidden md:flex gap-8 items-center text-sm tracking-widest uppercase text-white/80">
-          <Link href="/destinations/himalayas" className="hover:text-white transition-colors">Destinations</Link>
-          <Link href="/destinations/hills" className="hover:text-white transition-colors">Experiences</Link>
-          <button onClick={() => setModalOpen(true)} className="hover:text-white transition-colors uppercase tracking-widest text-sm">Plan Your Trip</button>
+          <Link href="/destinations" className="hover:text-white transition-colors">Destinations</Link>
+          <Link href="/destinations" className="hover:text-white transition-colors">Experiences</Link>
           <button onClick={() => setModalOpen(true)} className="px-6 py-2 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors font-medium text-white uppercase tracking-widest text-sm cursor-pointer">Book Now</button>
         </div>
 
@@ -283,9 +282,8 @@ function Navbar() {
       {/* Mobile Menu Dropdown */}
       <div className={`fixed inset-0 z-40 bg-black/95 flex flex-col items-center justify-center transition-all duration-300 md:hidden ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="flex flex-col gap-8 items-center text-lg tracking-widest uppercase text-white">
-          <Link onClick={() => setMenuOpen(false)} href="/destinations/himalayas" className="hover:text-gray-300">Destinations</Link>
-          <Link onClick={() => setMenuOpen(false)} href="/destinations/hills" className="hover:text-gray-300">Experiences</Link>
-          <button onClick={() => { setMenuOpen(false); setModalOpen(true); }} className="hover:text-gray-300 uppercase tracking-widest">Plan Your Trip</button>
+          <Link onClick={() => setMenuOpen(false)} href="/destinations" className="hover:text-gray-300">Destinations</Link>
+          <Link onClick={() => setMenuOpen(false)} href="/destinations" className="hover:text-gray-300">Experiences</Link>
           <button onClick={() => { setMenuOpen(false); setModalOpen(true); }} className="px-8 py-3 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors font-medium cursor-pointer">Book Now</button>
         </div>
       </div>

@@ -130,7 +130,7 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
         <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden h-fit sticky top-32">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-[100px] pointer-events-none" />
           <h3 className="text-2xl font-semibold mb-6">Plan Your Experience</h3>
-          <BookingForm destination={data.title} />
+          <BookingForm destinationSlug={slug} />
         </div>
 
       </div>

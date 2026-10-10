@@ -41,8 +41,23 @@ export function TripModal({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
         ) : (
           <form action={clientSubmit} className="space-y-6">
             <h3 className="text-2xl font-semibold text-white mb-6">Plan Your Trip</h3>
-            <input type="hidden" name="destination" value="Custom Expedition" />
-            
+
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Destination</label>
+              <select
+                name="destination_slug"
+                defaultValue=""
+                required
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white outline-none focus:border-white/50 transition-colors appearance-none"
+              >
+                <option value="" disabled>Select a Destination...</option>
+                <option value="himalayas">The Himalayas / Everest</option>
+                <option value="hills">The Hilly Region / Annapurna</option>
+                <option value="rivers">The Raging Rivers</option>
+                <option value="terai">The Terai Plains / Chitwan</option>
+              </select>
+            </div>
+
             <div>
               <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Full Name</label>
               <input type="text" name="fullName" required className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors" placeholder="E.g., Jane Mountaineer" />

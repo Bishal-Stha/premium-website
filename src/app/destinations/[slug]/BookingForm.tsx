@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { submitBooking } from '../../actions';
 
-export function BookingForm({ destination }: { destination: string }) {
+export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -31,7 +31,7 @@ export function BookingForm({ destination }: { destination: string }) {
         </div>
         <h4 className="text-2xl font-semibold mb-2">Request Received</h4>
         <p className="text-zinc-400 font-light text-sm">
-          A dedicated specialist will contact you shortly to curate your perfect {destination} itinerary.
+          A dedicated specialist will contact you shortly to curate your perfect itinerary.
         </p>
       </div>
     );
@@ -39,8 +39,22 @@ export function BookingForm({ destination }: { destination: string }) {
 
   return (
     <form action={clientSubmit} className="space-y-6 relative z-10">
-      <input type="hidden" name="destination" value={destination} />
-      
+      <div>
+        <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Destination</label>
+        <select
+          name="destination_slug"
+          defaultValue={destinationSlug}
+          required
+          className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white outline-none focus:border-white/50 transition-colors appearance-none"
+        >
+          <option value="" disabled>Select a Destination...</option>
+          <option value="himalayas">The Himalayas / Everest</option>
+          <option value="hills">The Hilly Region / Annapurna</option>
+          <option value="rivers">The Raging Rivers</option>
+          <option value="terai">The Terai Plains / Chitwan</option>
+        </select>
+      </div>
+
       <div>
         <label className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Full Name</label>
         <input 
