@@ -6,7 +6,7 @@ export function Footer() {
       <div className="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="col-span-1 md:col-span-2">
           <div className="flex items-center mb-6">
-            <img src="/logo.png" alt="Discover Nepal" className="w-20 h-20 object-contain" />
+            <Link href="/"><img src="/logo.png" alt="Discover Nepal" className="w-20 h-20 object-contain hover:scale-105 transition-transform cursor-pointer" /></Link>
           </div>
           <p className="font-light text-sm max-w-sm mb-6 leading-relaxed">
             Premium Himalayan treks, curated cultural experiences, and luxury wildlife safaris. Journey beyond the ordinary.

@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { TripModal } from '../components/TripModal';
 
@@ -271,6 +272,7 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -280,12 +282,20 @@ function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setMenuOpen(false);
+    }
+  };
+
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-500 border-b border-transparent ${
         scrolled || menuOpen ? 'bg-black/30 backdrop-blur-xl border-white/10 shadow-2xl' : 'bg-transparent'
       }`}>
-        <Link href="/" className="flex items-center relative z-50 hover:scale-105 transition-transform">
+        <Link href="/" onClick={handleLogoClick} className="flex items-center relative z-50 hover:scale-105 transition-transform">
           <img src="/logo.png" alt="Discover Nepal" className="w-16 h-16 md:w-20 md:h-20 object-contain hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all" />
           <span className="sr-only">Discover Nepal</span>
         </Link>
