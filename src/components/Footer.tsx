@@ -5,7 +5,10 @@ export function Footer() {
     <footer className="bg-zinc-950 text-zinc-400 py-16 border-t border-zinc-900">
       <div className="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="col-span-1 md:col-span-2">
-          <h2 className="text-white text-2xl font-bold tracking-tighter uppercase mb-6">Discover Nepal</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <img src="/logo.png" alt="Discover Nepal" className="w-16 h-16 object-contain" />
+            <h2 className="text-white text-2xl font-bold tracking-tighter uppercase hidden sm:block">Discover Nepal</h2>
+          </div>
           <p className="font-light text-sm max-w-sm mb-6 leading-relaxed">
             Premium Himalayan treks, curated cultural experiences, and luxury wildlife safaris. Journey beyond the ordinary.
           </p>

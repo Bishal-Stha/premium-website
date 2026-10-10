@@ -214,7 +214,7 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
           {/* First-Load Hero Overlay */}
           <div ref={heroRef} className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none transition-opacity duration-300">
              <span className="text-white/80 uppercase tracking-[0.5em] text-sm md:text-base font-semibold mb-4 drop-shadow-md">Welcome to the Top of the World</span>
-             <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-white drop-shadow-2xl mb-6">NEPAL</h1>
+             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-white drop-shadow-2xl mb-6">DISCOVER NEPAL</h1>
              <p className="max-w-xl text-lg md:text-xl font-light text-neutral-200 drop-shadow-xl">Embark on a cinematic journey through ancient mountains, cultural heartlands, and wild plains.</p>
              <div className="mt-12 flex flex-col items-center gap-2 animate-bounce opacity-80">
                 <span className="text-xs uppercase tracking-widest text-white">Scroll to Explore</span>

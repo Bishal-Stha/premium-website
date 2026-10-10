@@ -15,10 +15,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://premium-website-pearl.vercel.app"),
-  title: "Discover Nepal - Premium Himalayan Treks & Safaris",
+  title: "Discover Nepal",
   description: "Experience the breathtaking landscapes and unparalleled adventures of Nepal through an interactive cinematic journey.",
   openGraph: {
-    title: "Discover Nepal - Premium Tourism Experience",
+    title: "Discover Nepal",
     description: "An immersive scrollytelling web experience flying through the Himalayas down to the Terai plains.",
     url: "https://premium-website-pearl.vercel.app",
     siteName: "Discover Nepal",
