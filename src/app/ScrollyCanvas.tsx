@@ -27,18 +27,18 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loadedFrames, setLoadedFrames] = useState(0);
   const [isFullyLoaded, setIsFullyLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
   const totalFrames = 240;
 
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef(1);
 
   useLayoutEffect(() => {
-    // Basic mobile detection
-    setIsMobile(window.innerWidth < 768);
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const mql = window.matchMedia('(min-width: 768px)');
+    const update = () => setIsMobile(!mql.matches);
+    update();
+    mql.addEventListener('change', update);
+    return () => mql.removeEventListener('change', update);
   }, []);
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
   }, [isMobile]);
 
   useGSAP(() => {
-    if (!isFullyLoaded || !containerRef.current) return;
+    if (isMobile || !isFullyLoaded || !containerRef.current) return;
     
     // Canvas logic is only executed if canvasRef is present (desktop)
     let render = () => {};
@@ -224,13 +224,14 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
         <div className="relative w-full h-screen overflow-hidden">
           
           {isMobile ? (
-            <video 
-              src="/assets/video_fallback.mp4" 
-              autoPlay 
-              loop 
-              muted 
-              playsInline 
-              className="w-full h-full object-cover" 
+            <video
+              src="/assets/video_fallback.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster="/assets/sequence/frame_0001.webp"
+              className="w-full h-full object-cover"
             />
           ) : (
             <canvas ref={canvasRef} className="w-full h-full object-cover" />
@@ -257,6 +258,7 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
                 chapter={chapter} 
                 totalFrames={totalFrames}
                 currentFrameRef={currentFrameRef} 
+                isMobile={isMobile}
               />
             ))}
           </div>
@@ -332,16 +334,18 @@ function Navbar() {
 function ChapterText({ 
   chapter, 
   totalFrames, 
-  currentFrameRef 
+  currentFrameRef, 
+  isMobile 
 }: { 
   chapter: Chapter; 
   totalFrames: number; 
-  currentFrameRef: React.MutableRefObject<number> 
+  currentFrameRef: React.MutableRefObject<number>; 
+  isMobile: boolean; 
 }) {
   const textRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    if (!textRef.current) return;
+    if (isMobile || !textRef.current) return;
     
     const onTick = () => {
       const frame = currentFrameRef.current;
