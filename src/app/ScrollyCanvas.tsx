@@ -257,7 +257,7 @@ function Navbar() {
   return (
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-6 transition-all duration-500 border-b border-transparent ${
-        scrolled || menuOpen ? 'bg-black/90 backdrop-blur-md border-white/10 shadow-xl' : 'bg-transparent'
+        scrolled || menuOpen ? 'bg-black/30 backdrop-blur-xl border-white/10 shadow-2xl' : 'bg-transparent'
       }`}>
         <Link href="/" className="flex items-center relative z-50 hover:scale-105 transition-transform">
           <img src="/logo.png" alt="Discover Nepal" className="w-16 h-16 md:w-20 md:h-20 object-contain hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all" />
