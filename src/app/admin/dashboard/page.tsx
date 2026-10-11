@@ -32,7 +32,7 @@ export default function AdminDashboardPage() {
   const [leads, setLeads] = useState<BookingInquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [notification, setNotification] = useState<{ text: string; type: 'success' | 'info' | 'error' } | null>(null);
+  const [notification, setNotification] = useState<{ text: string; type: 'success' | 'info' | 'warning' | 'error' } | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [finalizingId, setFinalizingId] = useState<string | null>(null);
 
@@ -125,8 +125,8 @@ export default function AdminDashboardPage() {
       });
     } else if (result.emailWarning) {
       setNotification({
-        text: `Booking marked as confirmed in database. (Email note: ${result.emailWarning})`,
-        type: 'info',
+        text: `Booking marked as confirmed in database. Email dispatch notice: ${result.emailWarning}`,
+        type: 'warning',
       });
     } else {
       setNotification({
@@ -180,6 +180,10 @@ export default function AdminDashboardPage() {
             className={`p-4 rounded-2xl border text-sm flex items-center justify-between ${
               notification.type === 'success'
                 ? 'bg-emerald-950/60 border-emerald-800 text-emerald-200'
+                : notification.type === 'warning'
+                ? 'bg-amber-950/70 border-amber-700 text-amber-200'
+                : notification.type === 'error'
+                ? 'bg-red-950/70 border-red-800 text-red-200'
                 : 'bg-zinc-900 border-zinc-700 text-zinc-300'
             }`}
           >

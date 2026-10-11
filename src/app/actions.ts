@@ -67,30 +67,28 @@ export async function submitBooking(formData: FormData) {
 
     // STAGE 8 Auto-Responder: Trigger BookingConfirmation email via Resend
     try {
-      if (process.env.RESEND_API_KEY) {
-        const destinationDisplay =
-          destinationLabels[parsed.data.destination_slug] || parsed.data.destination_slug;
+      const destinationDisplay =
+        destinationLabels[parsed.data.destination_slug] || parsed.data.destination_slug;
 
-        const emailResult = await resend.emails.send({
-          from: DEFAULT_FROM_EMAIL,
-          to: [parsed.data.email],
-          subject: 'Expedition Inquiry Received — Discover Nepal',
-          react: BookingConfirmation({
-            customerName: parsed.data.name,
-            destinationName: destinationDisplay,
-            bookingDate: parsed.data.date,
-          }),
-        });
+      const emailResult = await resend.emails.send({
+        from: DEFAULT_FROM_EMAIL,
+        to: [parsed.data.email],
+        subject: 'Expedition Inquiry Received — Discover Nepal',
+        react: BookingConfirmation({
+          customerName: parsed.data.name,
+          destinationName: destinationDisplay,
+          bookingDate: parsed.data.date,
+        }),
+      });
 
-        if (emailResult.error) {
-          console.error("Resend auto-responder delivery warning:", emailResult.error);
-        }
-      } else {
-        console.warn("RESEND_API_KEY is not configured. Auto-responder email skipped in this environment.");
+      if (emailResult.error) {
+        const resendMessage = emailResult.error?.message || 'Resend delivery failed';
+        console.error('Resend auto-responder delivery error:', emailResult.error);
+        // Non-fatal for booking flow; booking already persisted
       }
     } catch (emailError) {
-      // Securely log email delivery error to server console without crashing frontend submission
-      console.error("Resend auto-responder unexpected failure:", emailError);
+      const message = emailError instanceof Error ? emailError.message : 'Email dispatch error';
+      console.error('Resend auto-responder unexpected failure:', emailError);
     }
 
     return { success: true };
@@ -138,32 +136,36 @@ export async function finalizeBooking(
 
     if (recipientEmail) {
       try {
-        if (process.env.RESEND_API_KEY) {
-          const emailResult = await resend.emails.send({
-            from: DEFAULT_FROM_EMAIL,
-            to: [recipientEmail],
-            subject: 'Official Expedition Confirmation & Next Steps — Discover Nepal',
-            react: TripFinalized({
-              customerName: recipientName,
-              destinationName: destDisplay,
-              bookingDate: tripDate,
-            }),
-          });
+        const emailResult = await resend.emails.send({
+          from: DEFAULT_FROM_EMAIL,
+          to: [recipientEmail],
+          subject: 'Official Expedition Confirmation & Next Steps — Discover Nepal',
+          react: TripFinalized({
+            customerName: recipientName,
+            destinationName: destDisplay,
+            bookingDate: tripDate,
+          }),
+        });
 
-          if (emailResult.error) {
-            console.error("Resend trip finalized delivery warning:", emailResult.error);
-            emailWarning = emailResult.error.message;
-          } else {
-            emailSent = true;
-          }
+        if (emailResult.error) {
+          const detail = emailResult.error.message || 'Resend delivery error';
+          console.error("Resend trip finalized delivery error:", emailResult.error);
+          emailWarning = detail;
         } else {
-          console.warn("RESEND_API_KEY is not configured. TripFinalized email skipped in this environment.");
-          emailWarning = "RESEND_API_KEY is not configured.";
+          emailSent = true;
         }
-      } catch (emailError) {
-        console.error("Resend trip finalized unexpected failure:", emailError);
-        emailWarning = emailError instanceof Error ? emailError.message : "Email dispatch failure";
+      } catch (emailError: unknown) {
+        console.error("Resend trip finalized exception:", emailError);
+        const detail =
+          emailError instanceof Error
+            ? emailError.message
+            : typeof emailError === 'string'
+            ? emailError
+            : 'Email dispatch failure';
+        emailWarning = detail;
       }
+    } else {
+      emailWarning = "No recipient email address found for this inquiry.";
     }
 
     return { success: true, emailSent, emailWarning };
@@ -172,3 +174,8 @@ export async function finalizeBooking(
     return { error: "An unexpected error occurred while finalizing booking." };
   }
 }
+
+/**
+ * Alias for finalizeBooking ensuring consistency across admin dispatch actions.
+ */
+export const sendOfficialConfirmation = finalizeBooking;
