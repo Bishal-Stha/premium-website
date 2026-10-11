@@ -34,7 +34,22 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to preview
 - Tailwind CSS
 - GSAP ScrollTrigger
 - Supabase
+- Resend & React Email
 - Vercel
+
+## Customer Communication & Transactional Emails
+
+The platform features an automated customer communication pipeline powered by Resend and `@react-email/components`:
+
+- **Auto-Responder (`BookingConfirmation.tsx`)**: Dispatched automatically upon customer inquiry submission with trip details and concierge contact.
+- **Official Confirmation (`TripFinalized.tsx`)**: Dispatched from the Admin Dashboard when clicking **Send Official Confirmation**, sending full itinerary preparation, permit handling, gear checklists, and wire payment details while transitioning lead status to `confirmed`.
+
+To enable email delivery in production, configure the following environment variable in Vercel or `.env.local`:
+```bash
+RESEND_API_KEY=re_your_api_key_here
+RESEND_FROM_EMAIL="Discover Nepal <onboarding@resend.dev>"
+```
+*(If omitted, Server Actions automatically log warnings gracefully without blocking the database or UI workflow).*
 
 ## Admin Lead Management
 
