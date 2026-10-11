@@ -16,12 +16,14 @@ interface BookingConfirmationProps {
   customerName?: string;
   destinationName?: string;
   bookingDate?: string;
+  bookingReference?: string;
 }
 
 export const BookingConfirmation = ({
   customerName = 'Explorer',
   destinationName = 'The Himalayas',
   bookingDate = 'TBD',
+  bookingReference,
 }: BookingConfirmationProps) => {
   return (
     <Html>
@@ -55,6 +57,12 @@ export const BookingConfirmation = ({
             <Text style={cardItem}>
               <strong>Desired Start Date:</strong> {bookingDate}
             </Text>
+            {bookingReference && (
+              <Text style={cardItem}>
+                <strong>Booking Reference:</strong>{' '}
+                <span style={referenceBadge}>{bookingReference}</span>
+              </Text>
+            )}
             <Text style={cardItem}>
               <strong>Status:</strong> Under Specialist Review
             </Text>
@@ -63,6 +71,23 @@ export const BookingConfirmation = ({
           <Text style={paragraph}>
             Our mountain guides and concierge team are currently reviewing your requested dates, seasonal acclimatization windows, and local lodge allocations.
           </Text>
+
+          {bookingReference && (
+            <Section style={manageBox}>
+              <Text style={manageBoxTitle}>MANAGE YOUR DATES</Text>
+              <Text style={manageBoxText}>
+                Need to adjust your target dates? You can modify your inquiry anytime using your email and reference key in our guest management portal:
+              </Text>
+              <Text style={{ margin: '8px 0 0 0' }}>
+                <a
+                  href="https://discovernepaltours.vercel.app/manage-booking"
+                  style={manageButton}
+                >
+                  Manage Booking Portal →
+                </a>
+              </Text>
+            </Section>
+          )}
 
           <Text style={paragraph}>
             A dedicated expedition specialist will contact you directly within 24 hours with a custom day-by-day itinerary and answers to any questions you may have.
@@ -173,6 +198,51 @@ const cardItem: React.CSSProperties = {
   lineHeight: '1.6',
   color: '#f4f4f5',
   margin: '6px 0',
+};
+
+const referenceBadge: React.CSSProperties = {
+  fontFamily: 'monospace',
+  fontSize: '13px',
+  backgroundColor: '#27272a',
+  padding: '2px 8px',
+  borderRadius: '6px',
+  color: '#38bdf8',
+  border: '1px solid #3f3f46',
+};
+
+const manageBox: React.CSSProperties = {
+  backgroundColor: '#18181b',
+  border: '1px solid #27272a',
+  borderRadius: '12px',
+  padding: '18px 20px',
+  margin: '20px 0',
+};
+
+const manageBoxTitle: React.CSSProperties = {
+  fontSize: '11px',
+  letterSpacing: '0.15em',
+  color: '#38bdf8',
+  fontWeight: 700,
+  margin: '0 0 6px 0',
+};
+
+const manageBoxText: React.CSSProperties = {
+  fontSize: '13px',
+  lineHeight: '1.5',
+  color: '#a1a1aa',
+  margin: '0 0 10px 0',
+};
+
+const manageButton: React.CSSProperties = {
+  color: '#ffffff',
+  backgroundColor: '#27272a',
+  border: '1px solid #3f3f46',
+  padding: '8px 16px',
+  borderRadius: '8px',
+  fontSize: '12px',
+  fontWeight: 600,
+  textDecoration: 'none',
+  display: 'inline-block',
 };
 
 const divider: React.CSSProperties = {

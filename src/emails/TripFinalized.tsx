@@ -17,6 +17,7 @@ interface TripFinalizedProps {
   destinationName?: string;
   bookingDate?: string;
   estimatedCost?: string;
+  bookingReference?: string;
 }
 
 export const TripFinalized = ({
@@ -24,6 +25,7 @@ export const TripFinalized = ({
   destinationName = 'The Himalayas',
   bookingDate = 'TBD',
   estimatedCost = 'Per Quotation',
+  bookingReference,
 }: TripFinalizedProps) => {
   return (
     <Html>
@@ -61,6 +63,14 @@ export const TripFinalized = ({
             <Text style={cardItem}>
               <strong>Confirmed Date:</strong> {bookingDate}
             </Text>
+            {bookingReference && (
+              <Text style={cardItem}>
+                <strong>Booking Reference:</strong>{' '}
+                <span style={{ fontFamily: 'monospace', color: '#34d399', backgroundColor: '#27272a', padding: '2px 8px', borderRadius: '6px', border: '1px solid #3f3f46' }}>
+                  {bookingReference}
+                </span>
+              </Text>
+            )}
             <Text style={cardItem}>
               <strong>Estimated Package:</strong> {estimatedCost}
             </Text>

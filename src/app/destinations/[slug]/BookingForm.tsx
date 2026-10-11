@@ -10,6 +10,7 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
     destination_slug: destinationSlug,
     fullName: "",
     email: "",
+    confirmEmail: "",
     bookingDate: ""
   });
 
@@ -51,7 +52,7 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
   }
 
   return (
-    <form action={clientSubmit} className="space-y-6 relative z-10">
+    <form action={clientSubmit} className="space-y-5 relative z-10">
       <div>
         <label htmlFor="formDestination" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Destination</label>
         <select
@@ -72,9 +73,9 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
 
       <div>
         <label htmlFor="formName" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Full Name</label>
-        <input 
+        <input
           id="formName"
-          type="text" 
+          type="text"
           name="fullName"
           value={formData.fullName}
           onChange={handleChange}
@@ -84,25 +85,41 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
         />
       </div>
 
-      <div>
-        <label htmlFor="formEmail" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Email Address</label>
-        <input 
-          id="formEmail"
-          type="email" 
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors"
-          placeholder="jane@example.com"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="formEmail" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Email Address</label>
+          <input
+            id="formEmail"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors"
+            placeholder="jane@example.com"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="formConfirmEmail" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Confirm Email</label>
+          <input
+            id="formConfirmEmail"
+            type="email"
+            name="confirmEmail"
+            value={formData.confirmEmail}
+            onChange={handleChange}
+            required
+            className="w-full bg-zinc-950/50 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder-zinc-700 outline-none focus:border-white/50 transition-colors"
+            placeholder="jane@example.com"
+          />
+        </div>
       </div>
 
       <div>
         <label htmlFor="formDate" className="block text-xs uppercase tracking-widest text-zinc-500 mb-2 font-medium">Desired Start Date</label>
-        <input 
+        <input
           id="formDate"
-          type="date" 
+          type="date"
           name="bookingDate"
           value={formData.bookingDate}
           onChange={handleChange}
@@ -115,10 +132,10 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
         <p className="text-red-400 text-sm font-medium">{errorMsg}</p>
       )}
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         disabled={status === 'loading'}
-        className="w-full bg-white text-black font-semibold uppercase tracking-widest text-sm py-4 rounded-xl mt-4 hover:bg-zinc-200 transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+        className="w-full bg-white text-black font-semibold uppercase tracking-widest text-sm py-4 rounded-xl mt-4 hover:bg-zinc-200 transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
       >
         {status === 'loading' ? 'Processing...' : 'Request Booking'}
       </button>

@@ -37,6 +37,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to preview
 - Resend & React Email
 - Vercel
 
+## Guest Booking Portal (/manage-booking)
+
+Guests can view and modify their reservation inquiries without creating an account:
+- **Secure Reference System**: Each inquiry receives a unique UUID `booking_reference` sent in their confirmation email.
+- **Double-Entry Email Validation**: Prevents typos by requiring email confirmation before inquiry submission.
+- **Self-Service Rescheduling**: Guests navigate to `/manage-booking`, enter their email and reference key, and update their desired expedition start date.
+
 ## Customer Communication & Transactional Emails
 
 The platform features an automated customer communication pipeline powered by Resend and `@react-email/components`:
