@@ -61,10 +61,10 @@ export async function submitBooking(formData: FormData) {
 
     // STAGE 9: Generate Unique Booking Reference
     const generatedRef = randomUUID();
-    let assignedRef: string = generatedRef;
+    const assignedRef: string = generatedRef;
 
-    // Insert into booking_inquiries (with graceful fallback if migration not yet applied)
-    let { data: insertedRow, error } = await supabase
+    // Insert into booking_inquiries (anon has INSERT permissions)
+    let { error } = await supabase
       .from('booking_inquiries')
       .insert([{
         destination_slug: sanitizedDestination,
@@ -73,9 +73,7 @@ export async function submitBooking(formData: FormData) {
         date: parsed.data.date,
         status: 'pending',
         booking_reference: generatedRef
-      }])
-      .select('id, booking_reference')
-      .maybeSingle();
+      }]);
 
     if (error && error.message?.includes('booking_reference')) {
       // Fallback if booking_reference column has not been added yet
@@ -94,10 +92,6 @@ export async function submitBooking(formData: FormData) {
     if (error) {
       console.error("Booking submission error:", error);
       return { error: "Failed to submit booking. Please try again later." };
-    }
-
-    if (insertedRow?.booking_reference) {
-      assignedRef = insertedRow.booking_reference;
     }
 
     // STAGE 8 & 9 Auto-Responder: Trigger BookingConfirmation email via Resend including booking reference
