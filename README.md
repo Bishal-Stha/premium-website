@@ -36,6 +36,18 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to preview
 - Supabase
 - Vercel
 
+## Admin Lead Management
+
+The admin dashboard is available at `/admin/login` and lets authenticated Supabase users view booking inquiries and update each lead's status.
+
+Create the first admin user from your local terminal with the Supabase CLI:
+
+```bash
+supabase auth users create admin@example.com --password 'REPLACE_WITH_A_STRONG_PASSWORD' --email-confirm
+```
+
+Alternatively, create the user in the Supabase dashboard under **Authentication → Users → Add user** and enable email/password sign-in for the project.
+
 ## Deployment
 
 Production is deployed on Vercel and currently available at:
