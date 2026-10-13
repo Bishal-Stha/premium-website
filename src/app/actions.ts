@@ -3,6 +3,7 @@
 import { randomUUID } from 'crypto';
 import { supabase } from '@/lib/supabase';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { checkRateLimit } from '@/lib/rate-limit';
 import { z } from 'zod';
 import escapeHtml from 'escape-html';
 import { resend, DEFAULT_FROM_EMAIL } from '@/lib/resend';
@@ -16,19 +17,43 @@ const destinationLabels: Record<string, string> = {
   terai: 'The Terai Plains / Chitwan Safari',
 };
 
-// STAGE 9: Email Validation (Double-Entry)
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Strict Input Validation Schema (Pillar 2)
 const BookingSchema = z
   .object({
-    destination_slug: z.string().trim().min(1, "Please select a destination."),
-    name: z.string().trim().min(1, "Full name is required.").max(120, "Name must not exceed 120 characters."),
-    email: z.string().trim().email("Please enter a valid email address."),
-    confirmEmail: z.string().trim().email("Please enter a valid confirmation email address."),
-    date: z.string().trim().refine((val) => {
-      const selectedDate = new Date(val);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return selectedDate >= today;
-    }, { message: "Booking date cannot be in the past." })
+    destination_slug: z.enum(['himalayas', 'hills', 'rivers', 'terai'], {
+      message: "Please select a valid destination from the list.",
+    }),
+    name: z
+      .string()
+      .trim()
+      .min(2, "Full name must be at least 2 characters.")
+      .max(120, "Name must not exceed 120 characters."),
+    email: z
+      .string()
+      .trim()
+      .email("Please enter a valid email address.")
+      .max(255, "Email address is too long."),
+    confirmEmail: z
+      .string()
+      .trim()
+      .email("Please enter a valid confirmation email address.")
+      .max(255, "Confirmation email address is too long."),
+    date: z
+      .string()
+      .trim()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "Please enter a valid date format (YYYY-MM-DD).")
+      .refine((val) => {
+        const selectedDate = new Date(val);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const maxDate = new Date();
+        maxDate.setFullYear(today.getFullYear() + 3);
+
+        return selectedDate >= today && selectedDate <= maxDate;
+      }, { message: "Booking date must be today or within the next 3 years." })
   })
   .refine((data) => data.email.toLowerCase() === data.confirmEmail.toLowerCase(), {
     message: "Email addresses do not match.",
@@ -37,6 +62,15 @@ const BookingSchema = z
 
 export async function submitBooking(formData: FormData) {
   try {
+    // 1. Rate Limiting (Pillar 1) — Max 5 submissions per minute per IP
+    const rateCheck = await checkRateLimit('submit_booking', 5, 60);
+    if (!rateCheck.allowed) {
+      return {
+        error: `Too many submissions. Please wait ${rateCheck.resetInSeconds} seconds before trying again.`,
+      };
+    }
+
+    // 2. Extract and Validate Input (Pillar 2)
     const rawData = {
       destination_slug: formData.get("destination_slug")?.toString() || "",
       name: formData.get("fullName")?.toString() || "",
@@ -50,20 +84,20 @@ export async function submitBooking(formData: FormData) {
     if (!parsed.success) {
       return {
         error: parsed.error.issues[0].message,
-        formData: rawData // Return the data so the frontend can preserve state if needed
+        formData: rawData // Return user data so frontend preserves form state
       };
     }
 
-    // Escape HTML from text inputs to prevent stored XSS
+    // 3. XSS Sanitization
     const sanitizedName = escapeHtml(parsed.data.name);
     const sanitizedEmail = escapeHtml(parsed.data.email);
     const sanitizedDestination = escapeHtml(parsed.data.destination_slug);
 
-    // STAGE 9: Generate Unique Booking Reference
+    // 4. Generate Unique Booking Reference
     const generatedRef = randomUUID();
     const assignedRef: string = generatedRef;
 
-    // Insert into booking_inquiries (anon has INSERT permissions)
+    // 5. Database Insertion
     let { error } = await supabase
       .from('booking_inquiries')
       .insert([{
@@ -76,7 +110,7 @@ export async function submitBooking(formData: FormData) {
       }]);
 
     if (error && error.message?.includes('booking_reference')) {
-      // Fallback if booking_reference column has not been added yet
+      // Fallback if column not yet added
       const retry = await supabase
         .from('booking_inquiries')
         .insert([{
@@ -90,11 +124,12 @@ export async function submitBooking(formData: FormData) {
     }
 
     if (error) {
-      console.error("Booking submission error:", error);
-      return { error: "Failed to submit booking. Please try again later." };
+      // Log full internal error on server without leaking details to client (Pillar 4)
+      console.error("Booking submission internal error:", error);
+      return { error: "Failed to submit booking inquiry. Please try again later." };
     }
 
-    // STAGE 8 & 9 Auto-Responder: Trigger BookingConfirmation email via Resend including booking reference
+    // 6. Auto-Responder Transactional Email via Resend
     try {
       const destinationDisplay =
         destinationLabels[parsed.data.destination_slug] || parsed.data.destination_slug;
@@ -120,8 +155,9 @@ export async function submitBooking(formData: FormData) {
 
     return { success: true, bookingReference: assignedRef };
   } catch (err) {
+    // Information Leakage Prevention: Never expose raw stack traces
     console.error("Unexpected error in submitBooking:", err);
-    return { error: "An unexpected error occurred." };
+    return { error: "An unexpected error occurred while processing your request." };
   }
 }
 
@@ -136,9 +172,22 @@ export async function finalizeBooking(
   }
 ) {
   try {
+    // 1. Rate Limiting — Max 15 admin updates per minute
+    const rateCheck = await checkRateLimit('finalize_booking', 15, 60);
+    if (!rateCheck.allowed) {
+      return {
+        error: `Rate limit reached. Please wait ${rateCheck.resetInSeconds} seconds before confirming more leads.`,
+      };
+    }
+
+    // 2. Validate inquiryId
+    if (!inquiryId || !UUID_REGEX.test(inquiryId.trim())) {
+      return { error: "Invalid booking inquiry identifier." };
+    }
+
     const serverSupabase = await createServerSupabaseClient();
 
-    // 1. Update row status to 'confirmed' in Supabase
+    // 3. Update row status to 'confirmed'
     const { data: updatedRow, error: updateError } = await serverSupabase
       .from('booking_inquiries')
       .update({ status: 'confirmed' })
@@ -148,7 +197,7 @@ export async function finalizeBooking(
 
     if (updateError) {
       console.error("Error updating booking inquiry to confirmed:", updateError);
-      return { error: updateError.message || "Failed to update inquiry status." };
+      return { error: "Failed to update inquiry status in database." };
     }
 
     const lead = updatedRow || leadDetails;
@@ -159,7 +208,7 @@ export async function finalizeBooking(
     const tripDate = lead?.date || leadDetails?.date || 'Upcoming Season';
     const bookingRef = (lead as Record<string, unknown>)?.booking_reference as string | undefined;
 
-    // 2. Dispatch TripFinalized email via Resend
+    // 4. Dispatch Official Confirmation Email
     let emailSent = false;
     let emailWarning: string | null = null;
 
@@ -205,23 +254,38 @@ export async function finalizeBooking(
   }
 }
 
-/**
- * Alias for finalizeBooking ensuring consistency across admin dispatch actions.
- */
 export const sendOfficialConfirmation = finalizeBooking;
 
-// STAGE 9: Guest Portal Server Actions (/manage-booking)
+// Guest Portal Server Actions (/manage-booking)
 
 export async function lookupBookingForGuest(email: string, reference: string) {
   try {
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanRef = reference.trim();
+    // 1. Rate Limiting (Pillar 1) — Max 10 lookups per minute to prevent brute-force attacks
+    const rateCheck = await checkRateLimit('lookup_booking', 10, 60);
+    if (!rateCheck.allowed) {
+      return {
+        error: `Too many lookup attempts. Please wait ${rateCheck.resetInSeconds} seconds before trying again.`,
+      };
+    }
+
+    const cleanEmail = email?.trim().toLowerCase();
+    const cleanRef = reference?.trim();
 
     if (!cleanEmail || !cleanRef) {
       return { error: "Please enter both your email address and booking reference." };
     }
 
-    // 1. Try RPC lookup first (bypasses RLS restrictions securely)
+    // 2. Validate email format & UUID format (Pillar 2)
+    const emailCheck = z.string().email().safeParse(cleanEmail);
+    if (!emailCheck.success) {
+      return { error: "Please provide a valid email address." };
+    }
+
+    if (!UUID_REGEX.test(cleanRef)) {
+      return { error: "Invalid booking reference format. Must be a valid UUID (e.g., 123e4567-e89b-12d3-a456-426614174000)." };
+    }
+
+    // 3. Try RPC lookup first
     try {
       const { data: rpcData, error: rpcError } = await supabase.rpc('get_guest_booking', {
         p_email: cleanEmail,
@@ -248,7 +312,7 @@ export async function lookupBookingForGuest(email: string, reference: string) {
       // RPC may not exist if migration is pending
     }
 
-    // 2. Direct query fallback
+    // 4. Direct query fallback
     const serverSupabase = await createServerSupabaseClient();
     const { data: directData, error: directError } = await serverSupabase
       .from('booking_inquiries')
@@ -282,22 +346,48 @@ export async function lookupBookingForGuest(email: string, reference: string) {
 
 export async function updateGuestBookingDate(email: string, reference: string, newDate: string) {
   try {
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanRef = reference.trim();
+    // 1. Rate Limiting — Max 5 date updates per minute
+    const rateCheck = await checkRateLimit('update_booking_date', 5, 60);
+    if (!rateCheck.allowed) {
+      return {
+        error: `Too many update attempts. Please wait ${rateCheck.resetInSeconds} seconds before trying again.`,
+      };
+    }
+
+    const cleanEmail = email?.trim().toLowerCase();
+    const cleanRef = reference?.trim();
 
     if (!cleanEmail || !cleanRef || !newDate) {
       return { error: "Email, reference, and new desired date are required." };
+    }
+
+    // 2. Strict Input Validation (Pillar 2)
+    if (!UUID_REGEX.test(cleanRef)) {
+      return { error: "Invalid booking reference format." };
+    }
+
+    const emailCheck = z.string().email().safeParse(cleanEmail);
+    if (!emailCheck.success) {
+      return { error: "Invalid email address format." };
+    }
+
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(newDate)) {
+      return { error: "Invalid date format. Expected YYYY-MM-DD." };
     }
 
     const selectedDate = new Date(newDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    if (isNaN(selectedDate.getTime()) || selectedDate < today) {
-      return { error: "Expedition date cannot be in the past." };
+    const maxDate = new Date();
+    maxDate.setFullYear(today.getFullYear() + 3);
+
+    if (isNaN(selectedDate.getTime()) || selectedDate < today || selectedDate > maxDate) {
+      return { error: "Expedition date must be today or within the next 3 years." };
     }
 
-    // 1. Try RPC update first
+    // 3. Try RPC update first
     try {
       const { data: rpcData, error: rpcError } = await supabase.rpc('update_guest_booking_date', {
         p_email: cleanEmail,
@@ -316,7 +406,7 @@ export async function updateGuestBookingDate(email: string, reference: string, n
       // RPC may not exist if migration is pending
     }
 
-    // 2. Direct query fallback
+    // 4. Direct query fallback
     const serverSupabase = await createServerSupabaseClient();
     const { data: updated, error: updateError } = await serverSupabase
       .from('booking_inquiries')
