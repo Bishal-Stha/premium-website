@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { supabaseBrowser } from '@/lib/supabase-browser';
 import { finalizeBooking } from '../../actions';
 
-type LeadStatus = 'pending' | 'contacted' | 'confirmed' | 'archived';
+type LeadStatus = 'pending' | 'contacted' | 'deposit_paid' | 'confirmed' | 'archived';
 
 type BookingInquiry = {
   id: string;
@@ -18,13 +18,18 @@ type BookingInquiry = {
   created_at: string;
 };
 
-const statusOptions: LeadStatus[] = ['pending', 'contacted', 'confirmed', 'archived'];
+const statusOptions: LeadStatus[] = ['pending', 'contacted', 'deposit_paid', 'confirmed', 'archived'];
 
 const destinationLabels: Record<string, string> = {
   himalayas: 'The Himalayas / Everest',
   hills: 'The Hilly Region / Annapurna',
   rivers: 'The Raging Rivers',
   terai: 'The Terai Plains / Chitwan',
+  'upper-mustang': 'Upper Mustang',
+  'manaslu-circuit': 'Manaslu Circuit',
+  'langtang-valley': 'Langtang Valley',
+  'gokyo-lakes': 'Gokyo Lakes & Everest',
+  'mardi-himal': 'Mardi Himal Base Camp',
 };
 
 export default function AdminDashboardPage() {

@@ -7,6 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { z } from 'zod';
 import escapeHtml from 'escape-html';
 import { resend, DEFAULT_FROM_EMAIL } from '@/lib/resend';
+import { generateEsewaSignature, DEFAULT_ESEWA_MERCHANT_CODE } from '@/lib/esewa';
 import { BookingConfirmation } from '@/emails/BookingConfirmation';
 import { TripFinalized } from '@/emails/TripFinalized';
 
@@ -445,3 +446,35 @@ export async function updateGuestBookingDate(email: string, reference: string, n
     return { error: "An unexpected error occurred while updating your reservation date." };
   }
 }
+
+export async function createEsewaPaymentPayload(bookingReference: string) {
+  try {
+    const cleanRef = bookingReference?.trim();
+    if (!cleanRef || !UUID_REGEX.test(cleanRef)) {
+      return { error: "Invalid booking reference." };
+    }
+
+    const totalAmount = 500;
+    const productCode = process.env.NEXT_PUBLIC_ESEWA_MERCHANT_CODE || DEFAULT_ESEWA_MERCHANT_CODE;
+    const signature = generateEsewaSignature(totalAmount, cleanRef, productCode);
+
+    return {
+      success: true,
+      payload: {
+        amount: totalAmount.toString(),
+        tax_amount: '0',
+        total_amount: totalAmount.toString(),
+        transaction_uuid: cleanRef,
+        product_code: productCode,
+        product_service_charge: '0',
+        product_delivery_charge: '0',
+        signed_field_names: 'total_amount,transaction_uuid,product_code',
+        signature,
+      },
+    };
+  } catch (err) {
+    console.error("Error generating eSewa payload:", err);
+    return { error: "Failed to generate eSewa payment checkout data." };
+  }
+}
+

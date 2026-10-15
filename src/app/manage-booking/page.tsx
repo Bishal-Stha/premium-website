@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
-import { lookupBookingForGuest, updateGuestBookingDate } from '../actions';
+import { useSearchParams } from 'next/navigation';
+import { lookupBookingForGuest, updateGuestBookingDate, createEsewaPaymentPayload } from '../actions';
+import { ESEWA_SANDBOX_URL } from '@/lib/esewa';
 
 interface GuestBooking {
   id: string;
@@ -15,7 +17,8 @@ interface GuestBooking {
   booking_reference: string;
 }
 
-export default function ManageBookingPage() {
+function ManageBookingContent() {
+  const searchParams = useSearchParams();
   const [lookupEmail, setLookupEmail] = useState('');
   const [lookupRef, setLookupRef] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +30,54 @@ export default function ManageBookingPage() {
   const [newDate, setNewDate] = useState('');
   const [updatingDate, setUpdatingDate] = useState(false);
 
+  // Hidden form submission ref for eSewa Sandbox checkout
+  const esewaFormRef = useRef<HTMLFormElement>(null);
+  const [esewaPayload, setEsewaPayload] = useState<{
+    amount: string;
+    tax_amount: string;
+    total_amount: string;
+    transaction_uuid: string;
+    product_code: string;
+    product_service_charge: string;
+    product_delivery_charge: string;
+    signed_field_names: string;
+    signature: string;
+    success_url: string;
+    failure_url: string;
+  } | null>(null);
+  const [initiatingPayment, setInitiatingPayment] = useState(false);
+
   const today = typeof window !== 'undefined' ? new Date().toISOString().split('T')[0] : '';
+
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    const successParam = searchParams.get('success');
+    const refParam = searchParams.get('ref');
+
+    const timer = setTimeout(() => {
+      if (errorParam === 'payment_failed') {
+        setErrorMsg('eSewa transaction was cancelled or failed. Please try again.');
+      } else if (errorParam) {
+        setErrorMsg(`Payment error: ${errorParam}. Please try again or contact support.`);
+      }
+
+      if (successParam === 'true') {
+        setSuccessMsg('Deposit payment successful! Your booking status has been updated to Deposit Paid.');
+        if (refParam) {
+          setLookupRef(refParam);
+        }
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [searchParams]);
+
+  // When esewaPayload is set and ready, auto-submit the hidden HTML form directly to eSewa Sandbox URL
+  useEffect(() => {
+    if (esewaPayload && esewaFormRef.current) {
+      esewaFormRef.current.submit();
+    }
+  }, [esewaPayload]);
 
   async function handleLookup(e: React.FormEvent) {
     e.preventDefault();
@@ -68,6 +118,27 @@ export default function ManageBookingPage() {
     setUpdatingDate(false);
   }
 
+  async function handleEsewaCheckout() {
+    if (!booking) return;
+    setInitiatingPayment(true);
+    setErrorMsg('');
+
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const res = await createEsewaPaymentPayload(booking.booking_reference);
+
+    if (res.error || !res.payload) {
+      setErrorMsg(res.error || 'Failed to initialize eSewa payment.');
+      setInitiatingPayment(false);
+      return;
+    }
+
+    setEsewaPayload({
+      ...res.payload,
+      success_url: `${origin}/api/esewa/verify`,
+      failure_url: `${origin}/manage-booking?error=payment_failed`,
+    });
+  }
+
   function handleResetSearch() {
     setBooking(null);
     setLookupEmail('');
@@ -77,7 +148,29 @@ export default function ManageBookingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500 selection:text-black">
+    <>
+      {/* Hidden form for direct browser submission to eSewa Sandbox URL */}
+      {esewaPayload && (
+        <form
+          ref={esewaFormRef}
+          method="POST"
+          action={ESEWA_SANDBOX_URL}
+          className="hidden"
+        >
+          <input type="hidden" name="amount" value={esewaPayload.amount} />
+          <input type="hidden" name="tax_amount" value={esewaPayload.tax_amount} />
+          <input type="hidden" name="total_amount" value={esewaPayload.total_amount} />
+          <input type="hidden" name="transaction_uuid" value={esewaPayload.transaction_uuid} />
+          <input type="hidden" name="product_code" value={esewaPayload.product_code} />
+          <input type="hidden" name="product_service_charge" value={esewaPayload.product_service_charge} />
+          <input type="hidden" name="product_delivery_charge" value={esewaPayload.product_delivery_charge} />
+          <input type="hidden" name="success_url" value={esewaPayload.success_url} />
+          <input type="hidden" name="failure_url" value={esewaPayload.failure_url} />
+          <input type="hidden" name="signed_field_names" value={esewaPayload.signed_field_names} />
+          <input type="hidden" name="signature" value={esewaPayload.signature} />
+        </form>
+      )}
+
       {/* Navigation Bar */}
       <nav className="fixed top-0 left-0 w-full z-50 bg-black/40 backdrop-blur-md border-b border-white/5 py-4 px-6 md:px-12 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-3">
@@ -191,7 +284,7 @@ export default function ManageBookingPage() {
             </form>
           </div>
         ) : (
-          /* STEP 2: Booking Details & Date Modification */
+          /* STEP 2: Booking Details, eSewa Payment & Date Modification */
           <div className="space-y-8">
             <div className="bg-zinc-900/80 border border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl backdrop-blur-xl">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
@@ -205,14 +298,14 @@ export default function ManageBookingPage() {
                   <span className="text-xs uppercase tracking-wider text-zinc-400">Status:</span>
                   <span
                     className={`px-3 py-1 rounded-full text-xs uppercase tracking-widest font-semibold ${
-                      booking.status === 'confirmed'
+                      booking.status === 'confirmed' || booking.status === 'deposit_paid'
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                         : booking.status === 'contacted'
                         ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
                         : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                     }`}
                   >
-                    {booking.status}
+                    {booking.status === 'deposit_paid' ? 'Deposit Paid' : booking.status}
                   </span>
                 </div>
               </div>
@@ -237,6 +330,40 @@ export default function ManageBookingPage() {
                   </div>
                 </div>
               </div>
+
+              {/* eSewa Test Mode Payment Section (Displayed for pending status) */}
+              {booking.status === 'pending' && (
+                <div className="py-6 border-b border-white/10 bg-emerald-950/20 -mx-8 md:-mx-10 px-8 md:px-10 rounded-2xl my-2 border border-emerald-500/20">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-xs uppercase tracking-widest font-semibold text-emerald-400">
+                          Secure Expedition Slot
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-semibold text-white mt-1">
+                        Pay Deposit via eSewa (Test Mode)
+                      </h4>
+                      <p className="text-xs text-zinc-400 mt-1">
+                        Deposit Amount: <span className="text-white font-mono font-medium">NPR 500.00</span> — Instantly secures your expedition slot in test mode.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleEsewaCheckout}
+                      disabled={initiatingPayment}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#60BB46] hover:bg-[#52a43b] text-white font-bold uppercase tracking-wider text-xs rounded-xl shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer whitespace-nowrap"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                      </svg>
+                      {initiatingPayment ? 'Redirecting to eSewa...' : 'eSewa Pay (Test)'}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Modify Date Form */}
               <div className="pt-6">
@@ -281,6 +408,20 @@ export default function ManageBookingPage() {
           </div>
         )}
       </div>
+    </>
+  );
+}
+
+export default function ManageBookingPage() {
+  return (
+    <main className="min-h-screen bg-zinc-950 text-white selection:bg-emerald-500 selection:text-black">
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-zinc-500 uppercase tracking-widest text-xs">Loading Reservation Portal...</p>
+        </div>
+      }>
+        <ManageBookingContent />
+      </Suspense>
     </main>
   );
 }
