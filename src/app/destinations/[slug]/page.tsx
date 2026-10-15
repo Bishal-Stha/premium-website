@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 
 export const instant = false;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://discovernepal.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://discovernepaltours.vercel.app';
 
 const destinationData = {
   himalayas: {

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://discovernepal.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://discovernepaltours.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -53,7 +53,7 @@ const organizationSchema = {
   image: `${siteUrl}/assets/thumb_everest.jpg`,
   description: "Experience the breathtaking landscapes and unparalleled adventures of Nepal through an interactive cinematic journey.",
   telephone: "+977-1-4400000",
-  email: "concierge@discovernepal.example.com",
+  email: "booking@discovernepaltours.vercel.app",
   address: {
     "@type": "PostalAddress",
     streetAddress: "123 Thamel Marg",
@@ -76,7 +76,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

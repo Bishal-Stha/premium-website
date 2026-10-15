@@ -52,55 +52,48 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
     }
 
     let count = 0;
-    const initialBatch = 30;
     const images: HTMLImageElement[] = [];
-    document.body.style.overflow = "hidden";
 
-    // Failsafe: if 10 seconds pass, forcibly dismiss the preloader
-    const failsafeTimeout = setTimeout(() => {
-      setIsFullyLoaded(true);
-      document.body.style.overflow = "auto";
-    }, 10000);
-
+    // Progressive reveal: Show hero UI as soon as frame_0001 loads (no scroll-lock blocking)
     const handleFrameProcessed = () => {
       count++;
       setLoadedFrames(count);
 
-      // Unlock UI as soon as the initial batch is ready (or if we already reached totalFrames somehow)
-      if (count === initialBatch || count === totalFrames) {
+      // Instantly reveal page as soon as first frame is ready
+      if (count === 1) {
         setIsFullyLoaded(true);
-        document.body.style.overflow = "auto";
-        clearTimeout(failsafeTimeout);
       }
     };
 
-    // Preload the first batch to unblock UI quickly...
-    for (let i = 1; i <= initialBatch; i++) {
-      const img = new Image();
-      const frameStr = i.toString().padStart(4, "0");
-      img.src = `/assets/sequence/frame_${frameStr}.webp`;
-      img.onload = handleFrameProcessed;
-      img.onerror = handleFrameProcessed;
-      images[i - 1] = (img);
-    }
+    // 1. Prioritize frame 1 for instant display
+    const firstImg = new Image();
+    firstImg.src = `/assets/sequence/frame_0001.webp`;
+    firstImg.onload = handleFrameProcessed;
+    firstImg.onerror = handleFrameProcessed;
+    images[0] = firstImg;
 
-    // ...Then fetch the remaining frames asynchronously
-    setTimeout(() => {
-      for (let i = initialBatch + 1; i <= totalFrames; i++) {
+    // Failsafe: Ensure UI is visible within 1.5 seconds regardless of network
+    const failsafe = setTimeout(() => {
+      setIsFullyLoaded(true);
+    }, 1500);
+
+    // 2. Stream remaining frames in the background without blocking scroll or UI
+    const timer = setTimeout(() => {
+      for (let i = 2; i <= totalFrames; i++) {
         const img = new Image();
         const frameStr = i.toString().padStart(4, "0");
         img.src = `/assets/sequence/frame_${frameStr}.webp`;
         img.onload = handleFrameProcessed;
         img.onerror = handleFrameProcessed;
-        images[i - 1] = (img);
+        images[i - 1] = img;
       }
-    }, 500);
+    }, 50);
 
     imagesRef.current = images;
 
     return () => {
-      document.body.style.overflow = "auto";
-      clearTimeout(failsafeTimeout);
+      clearTimeout(failsafe);
+      clearTimeout(timer);
     };
   }, [isMobile]);
 
@@ -307,7 +300,7 @@ function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden md:flex gap-8 items-center text-sm tracking-widest uppercase text-white/80">
           <Link href="/destinations" className="hover:text-white transition-colors">Destinations</Link>
-          <Link href="/destinations" className="hover:text-white transition-colors">Experiences</Link>
+          <a href="#experiences" className="hover:text-white transition-colors">Experiences</a>
           <button onClick={() => setModalOpen(true)} className="px-6 py-2 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors font-medium text-white uppercase tracking-widest text-sm cursor-pointer">Book Now</button>
         </div>
 
@@ -323,7 +316,7 @@ function Navbar() {
       <div className={`fixed inset-0 z-40 bg-black/95 flex flex-col items-center justify-center transition-all duration-300 md:hidden ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
         <div className="flex flex-col gap-8 items-center text-lg tracking-widest uppercase text-white">
           <Link onClick={() => setMenuOpen(false)} href="/destinations" className="hover:text-gray-300">Destinations</Link>
-          <Link onClick={() => setMenuOpen(false)} href="/destinations" className="hover:text-gray-300">Experiences</Link>
+          <a onClick={() => setMenuOpen(false)} href="#experiences" className="hover:text-gray-300">Experiences</a>
           <button onClick={() => { setMenuOpen(false); setModalOpen(true); }} className="px-8 py-3 border border-white/30 rounded-full hover:bg-white hover:text-black transition-colors font-medium cursor-pointer">Book Now</button>
         </div>
       </div>
@@ -348,18 +341,18 @@ function ChapterText({
 
   useGSAP(() => {
     if (isMobile || !textRef.current) return;
-    
+
     const onTick = () => {
       const frame = currentFrameRef.current;
-      const margin = 15; 
-      
+      const margin = 15;
+
       let opacity = 0;
       let yOffset = 30;
 
       if (frame >= chapter.frame_start && frame <= chapter.frame_end) {
         if (frame < chapter.frame_start + margin) {
           const t = (frame - chapter.frame_start) / margin;
-          opacity = Math.pow(t, 2); 
+          opacity = Math.pow(t, 2);
           yOffset = 30 * (1 - opacity);
         } else if (frame > chapter.frame_end - margin) {
           const t = (chapter.frame_end - frame) / margin;
@@ -383,7 +376,7 @@ function ChapterText({
 
     gsap.ticker.add(onTick);
     return () => gsap.ticker.remove(onTick);
-  }, [chapter, totalFrames, currentFrameRef]);
+  }, { dependencies: [isMobile, chapter, totalFrames, currentFrameRef], scope: textRef });
 
   return (
     <div 
@@ -422,9 +415,9 @@ function FeaturedPackages() {
   ];
 
   return (
-    <section className="bg-zinc-950 py-32 px-6 md:px-12 min-h-screen flex flex-col justify-center border-t border-zinc-900">
+    <section id="experiences" className="bg-zinc-950 py-16 md:py-20 px-6 md:px-12 flex flex-col justify-center border-t border-zinc-900">
       <div className="max-w-6xl mx-auto w-full">
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-16 text-center">
+        <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-12 text-center">
           Featured Packages
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

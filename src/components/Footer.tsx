@@ -14,7 +14,7 @@ export function Footer() {
           <div className="text-sm">
             <p>123 Thamel Marg, Kathmandu, Nepal</p>
             <p>+977 1 4400000</p>
-            <p>concierge@discovernepal.example.com</p>
+            <p>booking@discovernepaltours.vercel.app</p>
           </div>
         </div>
         
