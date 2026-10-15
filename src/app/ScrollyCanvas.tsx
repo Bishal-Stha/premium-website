@@ -556,10 +556,10 @@ function Navbar({ onBookNow }: { onBookNow: () => void }) {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 transition-all duration-500 border-b ${
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 transition-all duration-500 ${
           scrolled || menuOpen
-            ? "bg-black/80 backdrop-blur-xl border-white/10 shadow-2xl"
-            : "bg-gradient-to-b from-black/80 to-transparent border-transparent"
+            ? "bg-black/85 backdrop-blur-xl border-b border-white/10 shadow-2xl"
+            : "bg-gradient-to-b from-black/80 via-black/30 to-transparent border-b-0 border-transparent"
         }`}
       >
         <Link
