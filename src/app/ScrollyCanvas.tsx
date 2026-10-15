@@ -19,7 +19,7 @@ interface ChapterData {
   headlineHighlight?: string;
   headlineAccent?: string;
   subtext?: string;
-  theme: "purple" | "portal" | "red" | "noir" | "terai" | "halftone" | "amber";
+  theme: "natural" | "warm" | "terai" | "halftone" | "monochrome";
   image: string;
   imageAlt: string;
   accentBadge?: string;
@@ -33,10 +33,10 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineMain: "WHERE THE EARTH",
     headlineHighlight: "TOUCHES THE SKY",
     subtext: "Eight-thousand-meter monoliths piercing high-altitude twilight. An odyssey through pristine air, sacred valleys, and frozen eternal heights.",
-    theme: "purple",
+    theme: "natural",
     image: "/assets/chapters/hero.webp",
-    imageAlt: "Himalayan night skyline bathed in deep purple and magenta twilight",
-    accentBadge: "8,848M / NEON NOIR",
+    imageAlt: "Himalayan twilight skyline rising above mountain valleys",
+    accentBadge: "8,848M / SUMMIT REALM",
   },
   {
     id: "chapter-portal",
@@ -44,21 +44,21 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     eyebrow: "INTERLUDE — THE PASSAGE",
     headlineMain: "INTO THE VOID",
     subtext: "Beyond the troposphere, silence becomes tangible.",
-    theme: "portal",
+    theme: "natural",
     image: "/assets/chapters/portal.webp",
-    imageAlt: "Deep magenta nebula and cosmic cloud swirls over high Himalayan ridge silhouettes",
+    imageAlt: "Atmospheric cloud swirls and starry night sky over high Himalayan ridge silhouettes",
     accentBadge: "DIMENSION TRANSIT",
   },
   {
     id: "chapter-passes",
-    type: "red",
+    type: "culture",
     eyebrow: "VOL. 02 — THE HIGH PASSES",
     headlineMain: "THE WIND CARRIES",
     headlineHighlight: "TEN THOUSAND PRAYERS",
     subtext: "Five-thousand meters above the sea. Weathered prayer flags snapping violently against frozen gale winds across Thorong La.",
-    theme: "portal",
+    theme: "natural",
     image: "/assets/chapters/high-passes.webp",
-    imageAlt: "Tibetan prayer flags flapping violently at the summit of Thorong La Pass with towering snow peaks",
+    imageAlt: "Tibetan prayer flags flapping in alpine winds at the summit of Thorong La Pass with towering snow peaks",
     accentBadge: "THORONG LA // 5,416M",
   },
   {
@@ -69,9 +69,9 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineHighlight: "THE WORLD",
     headlineAccent: "SAGARMATHA",
     subtext: "High-altitude oxygen depletion. Razor-sharp ice seracs glowing crimson in the last alpine sunset. Where legends test human mortality.",
-    theme: "red",
+    theme: "warm",
     image: "/assets/chapters/roof-of-world.webp",
-    imageAlt: "Mount Everest and Lhotse bathed in crimson red sunset light with jagged glacial topography",
+    imageAlt: "Mount Everest and Lhotse bathed in crimson alpine sunset light with jagged glacial topography",
     accentBadge: "EBC // ELEVATION 5,364M",
   },
   {
@@ -79,10 +79,10 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     type: "portal",
     eyebrow: "INTERLUDE — ALPINE FIRST LIGHT",
     headlineMain: "FIRST LIGHT ON ICE",
-    subtext: "Before civilization wakes, golden fire ignites the eternal glaciers.",
-    theme: "amber",
+    subtext: "Before civilization wakes, golden sunlight ignites the eternal glaciers.",
+    theme: "warm",
     image: "/assets/chapters/sunburst-edge.webp",
-    imageAlt: "Golden sunburst illuminating jagged Himalayan ice walls and glacial ridges at dawn",
+    imageAlt: "Golden morning sunlight illuminating jagged Himalayan ice walls and glacial ridges at dawn",
     accentBadge: "KHUMBU CREST // 6,100M",
   },
   {
@@ -92,9 +92,9 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineMain: "ANCIENT STREETS",
     headlineHighlight: "LIVING GODS",
     subtext: "Intricately carved pagoda roofs whispering centuries of tantric mysticism. Butter lamps flickering through narrow brick alleys of Kathmandu Valley.",
-    theme: "noir",
+    theme: "natural",
     image: "/assets/chapters/ancient-streets.webp",
-    imageAlt: "Kathmandu Valley medieval temple square at midnight with glowing oil lamps and moody shadows",
+    imageAlt: "Kathmandu Valley medieval temple square at dusk with glowing warm oil lamps and ancient carved timber",
     accentBadge: "KATHMANDU / VALLEY OF SHRINES",
   },
   {
@@ -103,10 +103,10 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     eyebrow: "VOL. 05 — THE LIVING HERITAGE",
     headlineMain: "EYES OF THE BUDDHA",
     headlineHighlight: "ENDLESS COMPASSION",
-    subtext: "Scent of juniper incense curling into indigo skies. Devotees circumambulating Boudhanath stupa under the gaze that has watched five centuries.",
-    theme: "noir",
+    subtext: "Scent of juniper incense curling into dusk skies. Devotees circumambulating Boudhanath stupa under the gaze that has watched five centuries.",
+    theme: "natural",
     image: "/assets/chapters/living-heritage.webp",
-    imageAlt: "Devotees circumambulating the great white dome of Boudhanath Stupa at twilight",
+    imageAlt: "Devotees circumambulating the whitewashed dome of Boudhanath Stupa at twilight",
     accentBadge: "BOUDHANATH // UNESCO HERITAGE",
   },
   {
@@ -115,8 +115,8 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     eyebrow: "VOL. 06 — FESTIVAL OF LIGHTS",
     headlineMain: "WHEN SHADOWS DISSOLVE,",
     headlineHighlight: "GOLDEN FIRE AWAKENS.",
-    subtext: "Tens of thousands of brass diyo oil lamps flicker across temple steps. A kingdom transformed into a sea of sacred glowing embers.",
-    theme: "amber",
+    subtext: "Tens of thousands of brass diyo oil lamps flicker across temple steps. A kingdom illuminated in a sea of warm glowing embers.",
+    theme: "warm",
     image: "/assets/chapters/festival-lights.webp",
     imageAlt: "Sacred brass oil lamps burning brightly on temple steps during Tihar festival of lights",
     accentBadge: "TIHAR NIGHTS // GOLDEN FIRE",
@@ -127,7 +127,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     eyebrow: "INTERLUDE — SACRED WATERS",
     headlineMain: "THE GLASS MIRROR",
     subtext: "Still waters cradling the reflection of the sacred Annapurna giants at dawn.",
-    theme: "portal",
+    theme: "natural",
     image: "/assets/chapters/sacred-waters.webp",
     imageAlt: "Phewa Lake mirror reflection of Annapurna and Machapuchare mountain peaks at first light",
     accentBadge: "PHEWA BASIN // 820M",
@@ -139,9 +139,9 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineMain: "SAPPHIRE MIRRORS",
     headlineHighlight: "OF GOKYO RI",
     subtext: "Six sacred glacial lakes resting in the shadow of Cho Oyu. Pure turquoise waters reflecting silent eight-thousand-meter monoliths.",
-    theme: "purple",
+    theme: "natural",
     image: "/assets/chapters/gokyo-sapphire.webp",
-    imageAlt: "Vibrant turquoise glacial waters of Gokyo Lake surrounded by colossal Himalayan peaks",
+    imageAlt: "Vibrant sapphire turquoise glacial waters of Gokyo Lake surrounded by colossal Himalayan peaks",
     accentBadge: "GOKYO LAKES // 4,750M",
   },
   {
@@ -153,7 +153,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     subtext: "Deep sal forests echo with warning barks. Shadows of the greater one-horned rhinoceros carve trails through golden morning wetlands.",
     theme: "terai",
     image: "/assets/chapters/wild-terai.webp",
-    imageAlt: "Wild grasslands and jungle rivers of Chitwan shrouded in dense morning mist",
+    imageAlt: "Wild emerald grasslands and jungle rivers of Chitwan shrouded in dense morning mist",
     accentBadge: "TERAI WILDLANDS // 150M ELEVATION",
   },
   {
@@ -165,7 +165,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     subtext: "Step beyond ordinary travels. Enter the realm of mountain kings, glacial passes, and timeless silence.",
     theme: "halftone",
     image: "/assets/chapters/finale.webp",
-    imageAlt: "Dramatic black and white panoramic mountain range collage with high-contrast comic framing",
+    imageAlt: "Dramatic panoramic mountain range collage with high-contrast comic framing",
     accentBadge: "EXPEDITION SEASON 2026/2027",
   },
 ];
@@ -340,62 +340,46 @@ export default function ScrollyCanvas() {
                 loading={idx === 0 ? "eager" : "lazy"}
                 sizes="100vw"
                 className={`object-cover object-center transition-all duration-700 ${
-                  chapter.theme === "purple"
-                    ? "brightness-[0.72] contrast-[1.25] hue-rotate-[260deg] saturate-[1.6]"
-                    : chapter.theme === "portal"
-                    ? "brightness-[0.68] contrast-[1.4] hue-rotate-[290deg] saturate-[2.1]"
-                    : chapter.theme === "red"
-                    ? "brightness-[0.75] contrast-[1.35] hue-rotate-[320deg] saturate-[1.8]"
-                    : chapter.theme === "noir"
-                    ? "brightness-[0.6] contrast-[1.3] hue-rotate-[240deg] saturate-[1.4]"
-                    : chapter.theme === "amber"
-                    ? "brightness-[0.78] contrast-[1.3] hue-rotate-[350deg] saturate-[1.7]"
+                  chapter.theme === "natural"
+                    ? "brightness-[0.82] contrast-[1.15] saturate-[1.08]"
+                    : chapter.theme === "warm"
+                    ? "brightness-[0.85] contrast-[1.18] saturate-[1.12]"
                     : chapter.theme === "terai"
-                    ? "brightness-[0.65] contrast-[1.25] hue-rotate-[340deg] saturate-[1.5]"
-                    : "grayscale contrast-[1.65] brightness-[0.7]"
+                    ? "brightness-[0.80] contrast-[1.18] saturate-[1.15]"
+                    : chapter.theme === "monochrome"
+                    ? "grayscale contrast-[1.3] brightness-[0.75]"
+                    : "grayscale contrast-[1.4] brightness-[0.7]"
                 }`}
               />
 
-              {/* Tint Overlays matching Spider-Verse Reference Grading */}
-              {chapter.theme === "purple" && (
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0014] via-[#3b0764]/40 to-[#18002e]/60 mix-blend-multiply" />
-              )}
-              {chapter.theme === "portal" && (
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#2e0854] via-[#86198f]/40 to-[#020617]/70 mix-blend-color-burn" />
-              )}
-              {chapter.theme === "red" && (
-                <div className="absolute inset-0 bg-gradient-to-b from-[#450a0a]/50 via-[#881337]/35 to-[#000000]/80 mix-blend-multiply" />
-              )}
-              {chapter.theme === "noir" && (
-                <div className="absolute inset-0 bg-gradient-to-b from-[#1e1b4b]/60 via-[#0f172a]/40 to-black/85 mix-blend-multiply" />
-              )}
-              {chapter.theme === "amber" && (
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1c0800] via-[#7c2d12]/35 to-[#000000]/70 mix-blend-multiply" />
+              {/* Natural cinematic subtle vignette and depth gradients */}
+              {chapter.theme === "warm" && (
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-amber-950/15 to-transparent mix-blend-multiply" />
               )}
               {chapter.theme === "terai" && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-[#9f1239]/25 to-black/70 mix-blend-darken" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-emerald-950/15 to-transparent mix-blend-multiply" />
               )}
               {chapter.theme === "halftone" && (
                 <>
                   <div className="absolute inset-0 bg-black/60 z-0" />
                   <div className="absolute inset-0 halftone-dots opacity-20 mix-blend-overlay z-0" />
-                  {/* Comic panel framing borders */}
-                  <div className="absolute inset-4 md:inset-8 border-2 border-white/20 pointer-events-none z-10" />
+                  {/* Framing borders */}
+                  <div className="absolute inset-4 md:inset-8 border border-white/20 pointer-events-none z-10" />
                 </>
               )}
 
-              {/* Bottom black fade gradient for smooth readability */}
-              <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
+              {/* Bottom neutral dark fade gradient for smooth text readability */}
+              <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
             </div>
 
             {/* TOP CHAPTER TAG / METRICS */}
             <div className="relative z-10 pt-20 md:pt-12 flex justify-between items-center text-xs tracking-[0.3em] uppercase">
-              <span className="inline-flex items-center gap-2 font-mono font-bold text-white/80 bg-black/50 backdrop-blur-md px-3.5 py-1.5 rounded-sm border border-white/15">
-                <span className="w-2 h-2 rounded-full bg-[#E11D48] animate-pulse" />
+              <span className="inline-flex items-center gap-2 font-mono font-bold text-white/90 bg-neutral-900/80 backdrop-blur-md px-3.5 py-1.5 rounded-sm border border-white/15">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 {chapter.eyebrow}
               </span>
               {chapter.accentBadge && (
-                <span className="hidden sm:inline-block font-mono text-[10px] text-zinc-400 bg-white/5 px-2.5 py-1 border border-white/10 uppercase tracking-widest">
+                <span className="hidden sm:inline-block font-mono text-[10px] text-zinc-300 bg-black/40 px-2.5 py-1 border border-white/10 uppercase tracking-widest">
                   {chapter.accentBadge}
                 </span>
               )}
@@ -407,7 +391,7 @@ export default function ScrollyCanvas() {
                 <div>
                   <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-serif-display uppercase font-black tracking-tight leading-[0.9] text-white drop-shadow-[0_10px_35px_rgba(0,0,0,0.9)]">
                     {chapter.headlineMain} <br />
-                    <span className="bg-gradient-to-r from-white via-fuchsia-200 to-[#E11D48] bg-clip-text text-transparent italic font-serif">
+                    <span className="text-white/95 italic font-serif">
                       {chapter.headlineHighlight}
                     </span>
                   </h1>
@@ -415,7 +399,7 @@ export default function ScrollyCanvas() {
                     {chapter.subtext}
                   </p>
                   <div className="mt-8 flex items-center gap-3 text-xs tracking-[0.4em] uppercase text-zinc-400">
-                    <span className="w-12 h-[1px] bg-[#E11D48]" />
+                    <span className="w-12 h-[1px] bg-white/40" />
                     Scroll to Traverse Realm
                   </div>
                 </div>
@@ -423,10 +407,10 @@ export default function ScrollyCanvas() {
 
               {chapter.type === "portal" && (
                 <div className="text-center mx-auto max-w-2xl py-12">
-                  <span className="text-xs uppercase tracking-[0.6em] text-fuchsia-400 font-mono mb-4 block">
+                  <span className="text-xs uppercase tracking-[0.6em] text-zinc-400 font-mono mb-4 block">
                     TRANS-HIMALAYAN CORRIDOR
                   </span>
-                  <h2 className="text-5xl sm:text-7xl md:text-8xl font-condensed uppercase tracking-wider text-white drop-shadow-[0_0_40px_rgba(192,38,211,0.6)]">
+                  <h2 className="text-5xl sm:text-7xl md:text-8xl font-condensed uppercase tracking-wider text-white drop-shadow-[0_0_30px_rgba(0,0,0,0.8)]">
                     {chapter.headlineMain}
                   </h2>
                   <p className="mt-4 text-xs md:text-sm uppercase tracking-widest text-zinc-300 font-light">
@@ -437,10 +421,10 @@ export default function ScrollyCanvas() {
 
               {chapter.type === "red" && (
                 <div>
-                  <span className="text-xs uppercase font-mono tracking-[0.4em] text-[#E11D48] font-bold mb-2 block">
+                  <span className="text-xs uppercase font-mono tracking-[0.4em] text-red-500 font-bold mb-2 block">
                     8,848 METERS // CRUSHING PRESSURE
                   </span>
-                  <h2 className="text-5xl sm:text-7xl md:text-9xl font-condensed uppercase tracking-tight text-[#E11D48] leading-[0.88] drop-shadow-[0_0_50px_rgba(225,29,72,0.6)]">
+                  <h2 className="text-5xl sm:text-7xl md:text-9xl font-condensed uppercase tracking-tight text-[#E11D48] leading-[0.88] drop-shadow-[0_0_50px_rgba(225,29,72,0.5)]">
                     {chapter.headlineMain} <br />
                     <span className="text-white drop-shadow-2xl">
                       {chapter.headlineHighlight}
@@ -454,12 +438,12 @@ export default function ScrollyCanvas() {
 
               {chapter.type === "culture" && (
                 <div>
-                  <span className="text-xs uppercase font-mono tracking-[0.4em] text-fuchsia-300/80 mb-2 block">
-                    THE SHADOW TEMPLES // KATHMANDU VALLEY
+                  <span className="text-xs uppercase font-mono tracking-[0.4em] text-zinc-400 mb-2 block">
+                    THE ANCIENT VALLEYS // SACRED HERITAGE
                   </span>
                   <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-serif-display uppercase font-bold tracking-tight text-white leading-[0.92] drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]">
                     {chapter.headlineMain} <br />
-                    <span className="italic font-serif text-fuchsia-300 drop-shadow-[0_0_30px_rgba(217,70,239,0.5)]">
+                    <span className="italic font-serif text-zinc-200">
                       {chapter.headlineHighlight}
                     </span>
                   </h2>
@@ -471,16 +455,16 @@ export default function ScrollyCanvas() {
 
               {chapter.type === "wild" && (
                 <div>
-                  <span className="text-xs uppercase font-mono tracking-[0.4em] text-[#E11D48] font-semibold mb-2 block">
+                  <span className="text-xs uppercase font-mono tracking-[0.4em] text-emerald-400 font-semibold mb-2 block">
                     THE CHITWAN FLOODPLAINS
                   </span>
-                  <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-condensed uppercase tracking-tight text-white leading-[0.95]">
+                  <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-serif-display uppercase tracking-tight text-white leading-[0.95]">
                     {chapter.headlineMain} <br />
-                    <span className="text-[#E11D48] drop-shadow-[0_0_35px_rgba(225,29,72,0.8)]">
+                    <span className="text-zinc-200 italic font-serif">
                       {chapter.headlineHighlight}
                     </span>
                   </h2>
-                  <p className="mt-6 max-w-xl text-sm md:text-base text-zinc-300 font-light leading-relaxed border-l border-[#E11D48]/60 pl-4">
+                  <p className="mt-6 max-w-xl text-sm md:text-base text-zinc-300 font-light leading-relaxed border-l border-emerald-500/50 pl-4">
                     {chapter.subtext}
                   </p>
                 </div>
@@ -488,12 +472,12 @@ export default function ScrollyCanvas() {
 
               {chapter.type === "finale" && (
                 <div className="relative z-20">
-                  <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-[#E11D48] font-mono text-xs uppercase tracking-widest font-bold">
+                  <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-white font-mono text-xs uppercase tracking-widest font-bold">
                     <span>★</span> THE FINAL SUMMONS <span>★</span>
                   </div>
                   <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-condensed uppercase tracking-tight text-white leading-[0.9] drop-shadow-2xl">
                     {chapter.headlineMain} <br />
-                    <span className="text-[#E11D48] drop-shadow-[0_0_40px_rgba(225,29,72,0.9)] underline decoration-white/30 decoration-wavy">
+                    <span className="text-white/90 underline decoration-white/30 decoration-wavy">
                       {chapter.headlineHighlight}
                     </span>
                   </h2>
