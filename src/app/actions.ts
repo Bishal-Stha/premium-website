@@ -15,6 +15,11 @@ const destinationLabels: Record<string, string> = {
   hills: 'The Hilly Region / Annapurna Circuit',
   rivers: 'The Raging Rivers Expedition',
   terai: 'The Terai Plains / Chitwan Safari',
+  'upper-mustang': 'Upper Mustang / Forbidden Kingdom',
+  'manaslu-circuit': 'Manaslu Circuit Trek',
+  'langtang-valley': 'Langtang Valley / Valley of Glaciers',
+  'gokyo-lakes': 'Gokyo Lakes & Everest Panorama',
+  'mardi-himal': 'Mardi Himal Base Camp Trek',
 };
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -22,7 +27,17 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 // Strict Input Validation Schema (Pillar 2)
 const BookingSchema = z
   .object({
-    destination_slug: z.enum(['himalayas', 'hills', 'rivers', 'terai'], {
+    destination_slug: z.enum([
+      'himalayas',
+      'hills',
+      'rivers',
+      'terai',
+      'upper-mustang',
+      'manaslu-circuit',
+      'langtang-valley',
+      'gokyo-lakes',
+      'mardi-himal',
+    ], {
       message: "Please select a valid destination from the list.",
     }),
     name: z

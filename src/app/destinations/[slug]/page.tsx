@@ -62,6 +62,86 @@ const destinationData = {
       { day: 3, title: "Canoe Ride & Tharu Cultural Event" },
       { day: 4, title: "Departure" }
     ]
+  },
+  'upper-mustang': {
+    title: "Upper Mustang",
+    tagline: "The Last Forbidden Kingdom of the Himalayas.",
+    description: "Journey into the \"Last Forbidden Kingdom.\" Experience Trans-Himalayan deserts, ancient sky caves, and the walled Tibetan city of Lo Manthang. Immerse yourself in preserved centuries-old Tibetan Buddhist traditions amidst dramatic ochre canyons.",
+    duration: "14 Days",
+    difficulty: "Challenging",
+    price: "$2,650 USD",
+    itinerary: [
+      { day: 1, title: "Arrival in Kathmandu & Special Permit Processing" },
+      { day: 2, title: "Fly to Pokhara & Drive to Jomsom" },
+      { day: 3, title: "Enter Restricted Region: Trek to Kagbeni & Chele" },
+      { day: 7, title: "Explore the Walled Capital of Lo Manthang" },
+      { day: 10, title: "Discover Ancient Sky Caves & Monasteries in Chhoser" },
+      { day: 14, title: "Return Flight to Kathmandu via Pokhara" }
+    ]
+  },
+  'manaslu-circuit': {
+    title: "Manaslu Circuit",
+    tagline: "Circling the Mountain of the Spirit.",
+    description: "An off-the-beaten-path adventure circling the world's 8th highest peak, featuring the thrilling Larkya La Pass and rich Tibetan Buddhist culture. Traverse dramatic river gorges, pristine alpine forests, and rugged Himalayan wilderness.",
+    duration: "14 Days",
+    difficulty: "Challenging",
+    price: "$2,100 USD",
+    itinerary: [
+      { day: 1, title: "Drive from Kathmandu to Soti Khola / Machha Khola" },
+      { day: 3, title: "Trek along the Budhi Gandaki Gorge to Jagat" },
+      { day: 6, title: "Ascend to Samagaon with Views of Mount Manaslu" },
+      { day: 9, title: "Acclimatization & Exploration around Samdo" },
+      { day: 11, title: "Cross the High Larkya La Pass (5,160m)" },
+      { day: 14, title: "Descend to Besisahar & Drive back to Kathmandu" }
+    ]
+  },
+  'langtang-valley': {
+    title: "Langtang Valley",
+    tagline: "The Valley of Glaciers and Sacred Monasteries.",
+    description: "Known as the \"Valley of Glaciers.\" A stunning, accessible trek through Tamang villages, alpine meadows, and Kyanjin Gompa. Gaze at panoramic views of Langtang Lirung and experience the warmth of resilient Himalayan communities.",
+    duration: "10 Days",
+    difficulty: "Moderate",
+    price: "$1,450 USD",
+    itinerary: [
+      { day: 1, title: "Drive from Kathmandu to Syabrubesi" },
+      { day: 2, title: "Trek through Lush Forests to Lama Hotel" },
+      { day: 4, title: "Ascent into Langtang Village and Kyanjin Gompa" },
+      { day: 6, title: "Panoramic Sunrise Hike up Kyanjin Ri (4,773m)" },
+      { day: 8, title: "Descend back toward Bamboo and Rimche" },
+      { day: 10, title: "Return Drive to Kathmandu" }
+    ]
+  },
+  'gokyo-lakes': {
+    title: "Gokyo Lakes & Everest",
+    tagline: "Cobalt alpine waters beneath the giants.",
+    description: "A pristine alternative to the crowded Everest Base Camp trail. Witness sapphire Himalayan lakes and a panoramic sunrise from Gokyo Ri. Marvel at four 8,000-meter peaks including Everest, Lhotse, Makalu, and Cho Oyu from one vantage point.",
+    duration: "15 Days",
+    difficulty: "Challenging",
+    price: "$2,550 USD",
+    itinerary: [
+      { day: 1, title: "Scenic Flight from Kathmandu to Lukla & Trek to Phakding" },
+      { day: 3, title: "Ascend to Sherpa Capital Namche Bazaar" },
+      { day: 6, title: "Trek through Dole and Machhermo into the Gokyo Valley" },
+      { day: 8, title: "Reach the Turquoise Third Lake of Gokyo" },
+      { day: 10, title: "Sunrise Ascent of Gokyo Ri (5,357m) with Everest Panorama" },
+      { day: 15, title: "Trek to Lukla and Fly back to Kathmandu" }
+    ]
+  },
+  'mardi-himal': {
+    title: "Mardi Himal Base Camp",
+    tagline: "The quiet ridgeline trek beneath Fishtail.",
+    description: "A hidden gem in the Annapurna region offering peaceful ridgeline walks and spectacular, close-up views of Mount Machhapuchhre (Fishtail). Walk above the cloud line on narrow, dramatic ridges flanked by soaring Himalayan summits.",
+    duration: "8 Days",
+    difficulty: "Moderate",
+    price: "$1,250 USD",
+    itinerary: [
+      { day: 1, title: "Drive from Pokhara to Kande & Trek to Australian Camp" },
+      { day: 2, title: "Ascend through Enchanting Rhododendron Forests to Forest Camp" },
+      { day: 3, title: "Climb along the Ridge to Low Camp and High Camp (3,580m)" },
+      { day: 5, title: "Pre-dawn Trek to Mardi Himal Viewpoint & Base Camp (4,500m)" },
+      { day: 6, title: "Descend to Siding Village" },
+      { day: 8, title: "Return to Pokhara for Lakeside Relaxation" }
+    ]
   }
 };
 

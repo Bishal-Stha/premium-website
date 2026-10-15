@@ -68,6 +68,11 @@ export function BookingForm({ destinationSlug }: { destinationSlug: string }) {
           <option value="hills">The Hilly Region / Annapurna</option>
           <option value="rivers">The Raging Rivers</option>
           <option value="terai">The Terai Plains / Chitwan</option>
+          <option value="upper-mustang">Upper Mustang (14 Days)</option>
+          <option value="manaslu-circuit">Manaslu Circuit (14 Days)</option>
+          <option value="langtang-valley">Langtang Valley (10 Days)</option>
+          <option value="gokyo-lakes">Gokyo Lakes & Everest (15 Days)</option>
+          <option value="mardi-himal">Mardi Himal Base Camp (8 Days)</option>
         </select>
       </div>
 
