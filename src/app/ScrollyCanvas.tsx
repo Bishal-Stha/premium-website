@@ -34,7 +34,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineHighlight: "TOUCHES THE SKY",
     subtext: "Eight-thousand-meter monoliths piercing high-altitude twilight. An odyssey through pristine air, sacred valleys, and frozen eternal heights.",
     theme: "purple",
-    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=2400&q=85",
+    image: "/assets/chapters/hero.webp",
     imageAlt: "Himalayan night skyline bathed in deep purple and magenta twilight",
     accentBadge: "8,848M / NEON NOIR",
   },
@@ -45,7 +45,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineMain: "INTO THE VOID",
     subtext: "Beyond the troposphere, silence becomes tangible.",
     theme: "portal",
-    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2400&q=85",
+    image: "/assets/chapters/portal.webp",
     imageAlt: "Deep magenta nebula and cosmic cloud swirls over high Himalayan ridge silhouettes",
     accentBadge: "DIMENSION TRANSIT",
   },
@@ -58,7 +58,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineAccent: "SAGARMATHA",
     subtext: "High-altitude oxygen depletion. Razor-sharp ice seracs glowing crimson in the last alpine sunset. Where legends test human mortality.",
     theme: "red",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2400&q=85",
+    image: "/assets/chapters/roof-of-world.webp",
     imageAlt: "Mount Everest and Lhotse bathed in crimson red sunset light with jagged glacial topography",
     accentBadge: "EBC // ELEVATION 5,364M",
   },
@@ -70,7 +70,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineHighlight: "LIVING GODS",
     subtext: "Intricately carved pagoda roofs whispering centuries of tantric mysticism. Butter lamps flickering through narrow brick alleys of Kathmandu Valley.",
     theme: "noir",
-    image: "https://images.unsplash.com/photo-1582650625119-3a31f8418b7d?auto=format&fit=crop&w=2400&q=85",
+    image: "/assets/chapters/ancient-streets.webp",
     imageAlt: "Kathmandu Valley medieval temple square at midnight with glowing oil lamps and moody shadows",
     accentBadge: "KATHMANDU / VALLEY OF SHRINES",
   },
@@ -82,7 +82,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineHighlight: "THE JUNGLE IS ALREADY AWAKE.",
     subtext: "Deep sal forests echo with warning barks. Shadows of the greater one-horned rhinoceros carve trails through golden morning wetlands.",
     theme: "terai",
-    image: "https://images.unsplash.com/photo-1575550959106-5a7defe28b56?auto=format&fit=crop&w=2400&q=85",
+    image: "/assets/chapters/wild-terai.webp",
     imageAlt: "Wild grasslands and jungle rivers of Chitwan shrouded in dense morning mist",
     accentBadge: "TERAI WILDLANDS // 150M ELEVATION",
   },
@@ -94,7 +94,7 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     headlineHighlight: "NEPAL IS WAITING.",
     subtext: "Step beyond ordinary travels. Enter the realm of mountain kings, glacial passes, and timeless silence.",
     theme: "halftone",
-    image: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=2400&q=85",
+    image: "/assets/chapters/finale.webp",
     imageAlt: "Dramatic black and white panoramic mountain range collage with high-contrast comic framing",
     accentBadge: "EXPEDITION SEASON 2026/2027",
   },
@@ -104,30 +104,50 @@ export default function ScrollyCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
   const panelsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [isMobile, setIsMobile] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [activeChapterIndex, setActiveChapterIndex] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
 
   useLayoutEffect(() => {
-    const mql = window.matchMedia("(min-width: 768px)");
-    const update = () => setIsMobile(!mql.matches);
-    update();
-    mql.addEventListener("change", update);
-    return () => mql.removeEventListener("change", update);
+    const mqlMobile = window.matchMedia("(min-width: 768px)");
+    const updateMobile = () => setIsMobile(!mqlMobile.matches);
+    updateMobile();
+    mqlMobile.addEventListener("change", updateMobile);
+
+    const mqlMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotion = () => setPrefersReducedMotion(mqlMotion.matches);
+    updateMotion();
+    mqlMotion.addEventListener("change", updateMotion);
+
+    return () => {
+      mqlMobile.removeEventListener("change", updateMobile);
+      mqlMotion.removeEventListener("change", updateMotion);
+    };
   }, []);
 
   // Desktop GSAP ScrollTrigger timeline pinning full viewport scenes
   useGSAP(
     () => {
-      if (isMobile || !containerRef.current) return;
+      const disableScrub = isMobile || prefersReducedMotion;
+      if (disableScrub || !containerRef.current) return;
 
       const panels = panelsRef.current.filter(Boolean) as HTMLDivElement[];
       if (panels.length === 0) return;
 
-      // Ensure first panel is visible immediately
-      gsap.set(panels[0], { autoAlpha: 1, scale: 1 });
-      // Hide other panels initially
+      // Resting state for panel 0 immediately upon initialization
+      gsap.set(panels[0], {
+        autoAlpha: 1,
+        scale: 1,
+        filter: "brightness(1) blur(0px)",
+      });
+
+      // Resting starting state for other panels
       panels.slice(1).forEach((p) => {
-        gsap.set(p, { autoAlpha: 0, scale: 1.08 });
+        gsap.set(p, {
+          autoAlpha: 0,
+          scale: 1.08,
+          filter: "brightness(1.4) blur(4px)",
+        });
       });
 
       const tl = gsap.timeline({
@@ -177,16 +197,19 @@ export default function ScrollyCanvas() {
             filter: "brightness(1) blur(0px)",
             ease: "power2.out",
             duration: 1,
+            immediateRender: false,
           },
           `step-${i}`
         );
       });
 
+      ScrollTrigger.refresh();
+
       return () => {
         ScrollTrigger.getAll().forEach((st) => st.kill());
       };
     },
-    { dependencies: [isMobile], scope: containerRef }
+    { dependencies: [isMobile, prefersReducedMotion], scope: containerRef }
   );
 
   return (
@@ -196,7 +219,7 @@ export default function ScrollyCanvas() {
       {/* Persistent Film Grain and Vignette Texture Overlay */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-30 opacity-40 mix-blend-overlay film-grain"
+        className="pointer-events-none fixed inset-0 z-30 opacity-40 mix-blend-overlay film-grain motion-reduce:hidden"
       />
       <div
         aria-hidden="true"
@@ -218,7 +241,7 @@ export default function ScrollyCanvas() {
       <div
         ref={containerRef}
         className={
-          isMobile
+          isMobile || prefersReducedMotion
             ? "relative w-full bg-black flex flex-col"
             : "relative w-full h-screen bg-black overflow-hidden"
         }
@@ -230,7 +253,7 @@ export default function ScrollyCanvas() {
               panelsRef.current[idx] = el;
             }}
             className={
-              isMobile
+              isMobile || prefersReducedMotion
                 ? "relative w-full min-h-screen flex flex-col justify-between p-6 md:p-12 overflow-hidden border-b border-white/10"
                 : `absolute inset-0 w-full h-full flex flex-col justify-between p-8 md:p-16 overflow-hidden ${
                     idx === 0 ? "opacity-100 z-10" : "opacity-0 z-0"
