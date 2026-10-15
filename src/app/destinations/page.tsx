@@ -30,7 +30,7 @@ export default function DestinationsPage() {
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 drop-shadow-md">All Destinations</h1>
           <p className="text-xl font-light text-neutral-300 max-w-2xl mx-auto">
-            Choose your path through Nepal's diverse landscapes. Every region offers a fundamentally unique perspective of the country.
+            Choose your path through Nepal&apos;s diverse landscapes. Every region offers a fundamentally unique perspective of the country.
           </p>
         </div>
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 
@@ -13,14 +14,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://discovernepal.vercel.app';
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://premium-website-pearl.vercel.app"),
+  metadataBase: new URL(siteUrl),
   title: "Discover Nepal",
   description: "Experience the breathtaking landscapes and unparalleled adventures of Nepal through an interactive cinematic journey.",
+  alternates: {
+    canonical: siteUrl,
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
   openGraph: {
     title: "Discover Nepal",
     description: "An immersive scrollytelling web experience flying through the Himalayas down to the Terai plains.",
-    url: "https://premium-website-pearl.vercel.app",
+    url: siteUrl,
     siteName: "Discover Nepal",
     images: [
       {
@@ -35,6 +44,30 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": ["Organization", "TravelAgency"],
+  name: "Discover Nepal",
+  url: siteUrl,
+  logo: `${siteUrl}/logo.png`,
+  image: `${siteUrl}/assets/thumb_everest.jpg`,
+  description: "Experience the breathtaking landscapes and unparalleled adventures of Nepal through an interactive cinematic journey.",
+  telephone: "+977-1-4400000",
+  email: "concierge@discovernepal.example.com",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "123 Thamel Marg",
+    addressLocality: "Kathmandu",
+    postalCode: "44600",
+    addressCountry: "NP"
+  },
+  sameAs: [
+    "https://facebook.com/discovernepal",
+    "https://instagram.com/discovernepal",
+    "https://twitter.com/discovernepal"
+  ]
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -44,12 +77,19 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-black text-white">
         <div className="flex-1">
           {children}
         </div>
         <Footer />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
     </html>
   );

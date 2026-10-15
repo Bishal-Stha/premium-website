@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 
 export const instant = false;
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://discovernepal.vercel.app';
+
 const destinationData = {
   himalayas: {
     title: "Everest & The Himalayas",
@@ -63,24 +65,29 @@ const destinationData = {
   }
 };
 
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
   const data = destinationData[slug as keyof typeof destinationData];
-  
+
   if (!data) {
     return {
       title: 'Destination Not Found',
     };
   }
 
+  const canonicalUrl = `${siteUrl}/destinations/${slug}`;
+
   return {
     title: `${data.title} | Discover Nepal`,
     description: data.description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: `${data.title} | Discover Nepal`,
       description: data.description,
+      url: canonicalUrl,
     },
   };
 }
@@ -88,15 +95,60 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function DestinationPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
-  
+
   if (!(slug in destinationData)) {
     notFound();
   }
 
   const data = destinationData[slug as keyof typeof destinationData];
+  const canonicalUrl = `${siteUrl}/destinations/${slug}`;
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": siteUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Destinations",
+        "item": `${siteUrl}/destinations`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": data.title,
+        "item": canonicalUrl
+      }
+    ]
+  };
 
   return (
     <main className="bg-zinc-950 min-h-screen text-white pt-32 px-6 md:px-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
+      <nav aria-label="Breadcrumb" className="mb-8">
+        <ol className="flex items-center gap-2 text-xs uppercase tracking-widest text-zinc-500 font-medium">
+          <li>
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+          </li>
+          <li>/</li>
+          <li>
+            <Link href="/destinations" className="hover:text-white transition-colors">Destinations</Link>
+          </li>
+          <li>/</li>
+          <li className="text-zinc-300 font-semibold">{data.title}</li>
+        </ol>
+      </nav>
+
       <Link href="/" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white transition-colors uppercase tracking-widest text-xs font-semibold mb-12">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -105,7 +157,7 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
       </Link>
 
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 pb-32">
-        
+
         {/* Left Col: Info */}
         <div>
           <span className="text-zinc-500 uppercase tracking-[0.3em] font-medium text-sm block mb-4">Destination</span>
@@ -113,12 +165,12 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
             {data.title}
           </h1>
           <h2 className="text-xl md:text-2xl font-light text-zinc-300 mb-8 italic">
-            "{data.tagline}"
+            &ldquo;{data.tagline}&rdquo;
           </h2>
           <p className="text-lg md:text-xl font-light text-zinc-400 leading-relaxed mb-8">
             {data.description}
           </p>
-          
+
           <div className="grid grid-cols-3 gap-6 mt-12 border-t border-zinc-900 pt-10">
             <div>
               <h4 className="text-white font-semibold mb-2">Duration</h4>

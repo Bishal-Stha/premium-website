@@ -314,7 +314,7 @@ export async function lookupBookingForGuest(email: string, reference: string) {
 
     // 4. Direct query fallback
     const serverSupabase = await createServerSupabaseClient();
-    const { data: directData, error: directError } = await serverSupabase
+    const { data: directData } = await serverSupabase
       .from('booking_inquiries')
       .select('id, name, email, destination_slug, date, status, booking_reference')
       .ilike('email', cleanEmail)

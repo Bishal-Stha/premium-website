@@ -1,45 +1,53 @@
 import { MetadataRoute } from 'next';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://discovernepal.vercel.app';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://discovernepaltours.vercel.app',
+      url: siteUrl,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1,
     },
     {
-      url: 'https://discovernepaltours.vercel.app/destinations',
+      url: `${siteUrl}/destinations`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: 'https://discovernepaltours.vercel.app/destinations/himalayas',
+      url: `${siteUrl}/destinations/himalayas`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: 'https://discovernepaltours.vercel.app/destinations/hills',
+      url: `${siteUrl}/destinations/hills`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: 'https://discovernepaltours.vercel.app/destinations/rivers',
+      url: `${siteUrl}/destinations/rivers`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: 'https://discovernepaltours.vercel.app/destinations/terai',
+      url: `${siteUrl}/destinations/terai`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: 'https://discovernepaltours.vercel.app/policies',
+      url: `${siteUrl}/manage-booking`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${siteUrl}/policies`,
       lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.5,

@@ -44,9 +44,11 @@ export default function ScrollyCanvas({ chapters }: { chapters: Chapter[] }) {
   useEffect(() => {
     if (isMobile) {
       // If mobile, we bypass canvas loading strictly.
-      setLoadedFrames(totalFrames);
-      setIsFullyLoaded(true);
-      return;
+      const timer = setTimeout(() => {
+        setLoadedFrames(totalFrames);
+        setIsFullyLoaded(true);
+      }, 0);
+      return () => clearTimeout(timer);
     }
 
     let count = 0;

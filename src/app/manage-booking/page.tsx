@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { lookupBookingForGuest, updateGuestBookingDate } from '../actions';
 
@@ -26,11 +26,8 @@ export default function ManageBookingPage() {
 
   const [newDate, setNewDate] = useState('');
   const [updatingDate, setUpdatingDate] = useState(false);
-  const [today, setToday] = useState('');
 
-  useEffect(() => {
-    setToday(new Date().toISOString().split('T')[0]);
-  }, []);
+  const today = typeof window !== 'undefined' ? new Date().toISOString().split('T')[0] : '';
 
   async function handleLookup(e: React.FormEvent) {
     e.preventDefault();
