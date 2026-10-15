@@ -19,7 +19,7 @@ interface ChapterData {
   headlineHighlight?: string;
   headlineAccent?: string;
   subtext?: string;
-  theme: "purple" | "portal" | "red" | "noir" | "terai" | "halftone";
+  theme: "purple" | "portal" | "red" | "noir" | "terai" | "halftone" | "amber";
   image: string;
   imageAlt: string;
   accentBadge?: string;
@@ -50,9 +50,21 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     accentBadge: "DIMENSION TRANSIT",
   },
   {
+    id: "chapter-passes",
+    type: "red",
+    eyebrow: "VOL. 02 — THE HIGH PASSES",
+    headlineMain: "THE WIND CARRIES",
+    headlineHighlight: "TEN THOUSAND PRAYERS",
+    subtext: "Five-thousand meters above the sea. Weathered prayer flags snapping violently against frozen gale winds across Thorong La.",
+    theme: "portal",
+    image: "/assets/chapters/high-passes.webp",
+    imageAlt: "Tibetan prayer flags flapping violently at the summit of Thorong La Pass with towering snow peaks",
+    accentBadge: "THORONG LA // 5,416M",
+  },
+  {
     id: "chapter-red",
     type: "red",
-    eyebrow: "VOL. 02 — SCARLET HORIZON",
+    eyebrow: "VOL. 03 — SCARLET HORIZON",
     headlineMain: "THE ROOF OF",
     headlineHighlight: "THE WORLD",
     headlineAccent: "SAGARMATHA",
@@ -63,9 +75,20 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     accentBadge: "EBC // ELEVATION 5,364M",
   },
   {
+    id: "chapter-sunburst",
+    type: "portal",
+    eyebrow: "INTERLUDE — ALPINE FIRST LIGHT",
+    headlineMain: "FIRST LIGHT ON ICE",
+    subtext: "Before civilization wakes, golden fire ignites the eternal glaciers.",
+    theme: "amber",
+    image: "/assets/chapters/sunburst-edge.webp",
+    imageAlt: "Golden sunburst illuminating jagged Himalayan ice walls and glacial ridges at dawn",
+    accentBadge: "KHUMBU CREST // 6,100M",
+  },
+  {
     id: "chapter-culture",
     type: "culture",
-    eyebrow: "VOL. 03 — ANCIENT CHRONICLES",
+    eyebrow: "VOL. 04 — ANCIENT CHRONICLES",
     headlineMain: "ANCIENT STREETS",
     headlineHighlight: "LIVING GODS",
     subtext: "Intricately carved pagoda roofs whispering centuries of tantric mysticism. Butter lamps flickering through narrow brick alleys of Kathmandu Valley.",
@@ -75,9 +98,56 @@ const CINEMATIC_CHAPTERS: ChapterData[] = [
     accentBadge: "KATHMANDU / VALLEY OF SHRINES",
   },
   {
+    id: "chapter-living-heritage",
+    type: "culture",
+    eyebrow: "VOL. 05 — THE LIVING HERITAGE",
+    headlineMain: "EYES OF THE BUDDHA",
+    headlineHighlight: "ENDLESS COMPASSION",
+    subtext: "Scent of juniper incense curling into indigo skies. Devotees circumambulating Boudhanath stupa under the gaze that has watched five centuries.",
+    theme: "noir",
+    image: "/assets/chapters/living-heritage.webp",
+    imageAlt: "Devotees circumambulating the great white dome of Boudhanath Stupa at twilight",
+    accentBadge: "BOUDHANATH // UNESCO HERITAGE",
+  },
+  {
+    id: "chapter-festival-lights",
+    type: "culture",
+    eyebrow: "VOL. 06 — FESTIVAL OF LIGHTS",
+    headlineMain: "WHEN SHADOWS DISSOLVE,",
+    headlineHighlight: "GOLDEN FIRE AWAKENS.",
+    subtext: "Tens of thousands of brass diyo oil lamps flicker across temple steps. A kingdom transformed into a sea of sacred glowing embers.",
+    theme: "amber",
+    image: "/assets/chapters/festival-lights.webp",
+    imageAlt: "Sacred brass oil lamps burning brightly on temple steps during Tihar festival of lights",
+    accentBadge: "TIHAR NIGHTS // GOLDEN FIRE",
+  },
+  {
+    id: "chapter-sacred-waters",
+    type: "portal",
+    eyebrow: "INTERLUDE — SACRED WATERS",
+    headlineMain: "THE GLASS MIRROR",
+    subtext: "Still waters cradling the reflection of the sacred Annapurna giants at dawn.",
+    theme: "portal",
+    image: "/assets/chapters/sacred-waters.webp",
+    imageAlt: "Phewa Lake mirror reflection of Annapurna and Machapuchare mountain peaks at first light",
+    accentBadge: "PHEWA BASIN // 820M",
+  },
+  {
+    id: "chapter-gokyo",
+    type: "hero",
+    eyebrow: "VOL. 07 — SAPPHIRE ELEVATION",
+    headlineMain: "SAPPHIRE MIRRORS",
+    headlineHighlight: "OF GOKYO RI",
+    subtext: "Six sacred glacial lakes resting in the shadow of Cho Oyu. Pure turquoise waters reflecting silent eight-thousand-meter monoliths.",
+    theme: "purple",
+    image: "/assets/chapters/gokyo-sapphire.webp",
+    imageAlt: "Vibrant turquoise glacial waters of Gokyo Lake surrounded by colossal Himalayan peaks",
+    accentBadge: "GOKYO LAKES // 4,750M",
+  },
+  {
     id: "chapter-wild",
     type: "wild",
-    eyebrow: "VOL. 04 — JUNGLE PRIMAL",
+    eyebrow: "VOL. 08 — JUNGLE PRIMAL",
     headlineMain: "BEFORE THE MIST LIFTS,",
     headlineHighlight: "THE JUNGLE IS ALREADY AWAKE.",
     subtext: "Deep sal forests echo with warning barks. Shadows of the greater one-horned rhinoceros carve trails through golden morning wetlands.",
@@ -278,6 +348,8 @@ export default function ScrollyCanvas() {
                     ? "brightness-[0.75] contrast-[1.35] hue-rotate-[320deg] saturate-[1.8]"
                     : chapter.theme === "noir"
                     ? "brightness-[0.6] contrast-[1.3] hue-rotate-[240deg] saturate-[1.4]"
+                    : chapter.theme === "amber"
+                    ? "brightness-[0.78] contrast-[1.3] hue-rotate-[350deg] saturate-[1.7]"
                     : chapter.theme === "terai"
                     ? "brightness-[0.65] contrast-[1.25] hue-rotate-[340deg] saturate-[1.5]"
                     : "grayscale contrast-[1.65] brightness-[0.7]"
@@ -296,6 +368,9 @@ export default function ScrollyCanvas() {
               )}
               {chapter.theme === "noir" && (
                 <div className="absolute inset-0 bg-gradient-to-b from-[#1e1b4b]/60 via-[#0f172a]/40 to-black/85 mix-blend-multiply" />
+              )}
+              {chapter.theme === "amber" && (
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1c0800] via-[#7c2d12]/35 to-[#000000]/70 mix-blend-multiply" />
               )}
               {chapter.theme === "terai" && (
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-[#9f1239]/25 to-black/70 mix-blend-darken" />
@@ -450,7 +525,7 @@ export default function ScrollyCanvas() {
 
             {/* Desktop Chapter Indicator Bar */}
             <div className="relative z-10 hidden md:flex items-center gap-2 text-[10px] font-mono tracking-widest uppercase text-zinc-500">
-              <span>0{idx + 1}</span>
+              <span>{String(idx + 1).padStart(2, "0")}</span>
               <div className="w-16 h-[2px] bg-white/10 overflow-hidden">
                 <div
                   className="h-full bg-[#E11D48] transition-all duration-300"
@@ -459,7 +534,7 @@ export default function ScrollyCanvas() {
                   }}
                 />
               </div>
-              <span>0{CINEMATIC_CHAPTERS.length}</span>
+              <span>{String(CINEMATIC_CHAPTERS.length).padStart(2, "0")}</span>
             </div>
           </div>
         ))}
